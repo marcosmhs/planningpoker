@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCHpXGnVa5q9NoTnLqaMTxN8VdRWkKWuA0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>926979793410</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.thatexoticname.planningpoker.planningpoker</string>
+	<key>PROJECT_ID</key>
+	<string>planningpoker-teb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>planningpoker-teb.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:926979793410:ios:f7824cd3e49d43a1ad3d1b</string>
+</dict>
+</plist>
