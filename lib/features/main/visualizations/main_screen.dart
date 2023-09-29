@@ -43,6 +43,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   var currentUser = User();
   var currentPlanning = PlanningData();
+  var votingStory = Story();
 
   final List<Map<int, String>> avaliablesCards = [
     {0: 'Um café'},
@@ -103,6 +104,12 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       constraints: BoxConstraints.tightFor(height: 45, width: MediaQuery.of(ctx).size.width * 0.70),
                       child: ElevatedButton.icon(
                         onPressed: () async {
+                          if (votingStory.id != story.id) {
+                            CustomDialog(context: context)
+                                .errorMessage(message: 'Já existe uma história em votação, é necssário finalizá-la antes')
+                                .then((value) => Navigator.of(ctx, rootNavigator: true).pop());
+                            return;
+                          }
                           if (story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished) {
                             (CustomDialog(context: context).customdialog(
                               message: 'Esta história já está em votacão, deseja cancelar a votação dela?',
@@ -530,7 +537,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       : ((a.status == StoryStatus.voting) ? -1 : 1)),
                 );
               }
-              var votingStory = stories
+              votingStory = stories
                       .where((story) => story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished)
                       .firstOrNull ??
                   Story();

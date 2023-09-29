@@ -7,6 +7,7 @@ import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/util/uid_generator.dart';
 import 'package:planningpoker/components/visual_elements/buttons_line.dart';
+import 'package:planningpoker/components/visual_elements/custom_checkbox.dart';
 import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/planning_poker.dart';
@@ -214,6 +215,13 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                           if (finalValue.trim().isEmpty) return 'O seu nome deve ser informado';
                           return null;
                         },
+                      ),
+
+                      CustomCheckBox(
+                        context: context,
+                        value: _planningData.othersCanCreateStories,
+                        title: 'Outros espectadores podem criar histórias',
+                        onChanged: (value) => setState(() => _planningData.othersCanCreateStories = value!),
                       ),
 
                       // Role

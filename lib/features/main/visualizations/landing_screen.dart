@@ -120,6 +120,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   CustomMessage.error(context, message: 'Informe seu nome');
                 } else {
                   _user.planningPokerId = _planning.id;
+                  if (_user.isSpectator) _user.creator = _planning.othersCanCreateStories;
                   var customReturn = await userController.save(user: _user);
                   if (customReturn.returnType == ReturnType.error) {
                     if (!kIsWeb) {

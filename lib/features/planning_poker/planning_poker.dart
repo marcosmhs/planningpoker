@@ -13,12 +13,15 @@ class PlanningData {
   late String invitationCode;
   @HiveField(3)
   late DateTime? createDate;
+  @HiveField(4)
+  late bool othersCanCreateStories;
 
   PlanningData({
     this.id = '',
     this.name = '',
     this.invitationCode = '',
     this.createDate,
+    this.othersCanCreateStories = false,
   });
 
   factory PlanningData.fromDocument(DocumentSnapshot doc) {
@@ -34,6 +37,7 @@ class PlanningData {
       name: map['name'] ?? '',
       invitationCode: map['invitationCode'] ?? '',
       createDate: map['createDate'] == null ? null : DateTime.tryParse(map['createDate']),
+      othersCanCreateStories: map['othersCanCreateStories'] ?? false,
     );
     return u;
   }
@@ -45,6 +49,7 @@ class PlanningData {
       'name': name,
       'invitationCode': invitationCode,
       'createDate': createDate.toString(),
+      'othersCanCreateStories': othersCanCreateStories,
     };
 
     return r;

@@ -44,6 +44,8 @@ class HiveController with ChangeNotifier {
 
     var planningPokerController = PlanningPokerController();
 
+    if (_planningData.id.isEmpty) return;
+
     var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
 
     if (!planningExists) {
