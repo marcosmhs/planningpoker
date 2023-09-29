@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomScaffold extends StatelessWidget {
   final Widget body;
-  final String title;
+  final Widget? title;
   final bool showAppDrawer;
   final bool showAppBar;
   final List<Widget>? appBarActions;
@@ -14,7 +14,7 @@ class CustomScaffold extends StatelessWidget {
 
   const CustomScaffold(
       {Key? key,
-      this.title = '',
+      this.title,
       this.drawer,
       this.showAppBar = true,
       required this.body,
@@ -33,7 +33,7 @@ class CustomScaffold extends StatelessWidget {
       appBar: appBar ??
           (showAppBar
               ? AppBar(
-                  title: Text(title),
+                  title: title,
                   actions: appBarActions,
                 )
               : null),

@@ -149,7 +149,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
     }
 
     return CustomScaffold(
-      title: _newPlanning ? 'Nova partida' : 'Alterar partida',
+      title: Text(_newPlanning ? 'Nova partida' : 'Alterar partida'),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
@@ -215,10 +215,11 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                           return null;
                         },
                       ),
+
                       // Role
                       //_roleSelection(context),
-                      //const SizedBox(height: 20),
 
+                      const SizedBox(height: 20),
                       // Butons
                       ButtonsLine(
                         buttons: [

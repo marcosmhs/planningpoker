@@ -26,7 +26,7 @@ class CustomTextEdit extends StatefulWidget {
   final int maxLines;
   final int? maxLength;
   final String mask;
-  final upperCase;
+  final bool upperCase;
 
   const CustomTextEdit({
     Key? key,

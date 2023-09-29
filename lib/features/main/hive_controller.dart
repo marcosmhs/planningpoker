@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/planning_poker/planning_poker.dart';
 
 import 'package:planningpoker/features/user/user.dart';
@@ -39,6 +40,15 @@ class HiveController with ChangeNotifier {
     await _preparePlanningDataHiveBox();
     if (_planningDataHiveBox.isNotEmpty) {
       _planningData = _planningDataHiveBox.get(_planningDataHiveBox.keyAt(0));
+    }
+
+    var planningPokerController = PlanningPokerController();
+
+    var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
+
+    if (!planningExists) {
+      _planningData = PlanningData();
+      _user = User();
     }
   }
 

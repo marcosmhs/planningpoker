@@ -79,7 +79,7 @@ class _StoryFormState extends State<StoryForm> {
     }
 
     return CustomScaffold(
-      title: story.id.isEmpty ? 'Nova história' : 'Alterar história',
+      title: Text(story.id.isEmpty ? 'Nova história' : 'Alterar história'),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(

@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:restart_app/restart_app.dart';
 
 import 'dart:convert';
@@ -46,6 +47,21 @@ class Util {
 
   static String dateTimeFormat({required DateTime date, String mask = 'dd/MM/yyyy'}) {
     return DateFormat(mask).format(date);
+  }
+
+  static PackageInfo get packageInfo {
+    return PackageInfo(
+      appName: '',
+      packageName: '',
+      version: '',
+      buildNumber: '',
+      buildSignature: '',
+      installerStore: '',
+    );
+  }
+
+  static Future<PackageInfo> get version {
+    return PackageInfo.fromPlatform();
   }
 
   static String encrypt(String value) {

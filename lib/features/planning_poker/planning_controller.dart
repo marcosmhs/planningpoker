@@ -53,11 +53,15 @@ class PlanningPokerController with ChangeNotifier {
     }
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getPlanningData({String planningId = ''}) {
-    return FirebaseFirestore.instance
-        .collection(_planningDataCollectionName)
-        .doc(planningId.isNotEmpty ? planningId : _currentPlanning.id)
-        .snapshots();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPlanningData({required String planningId}) {
+    return FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningId).snapshots();
+  }
+
+  Future<bool> planningExists({required String planningId}) async {
+    final query = FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningId);
+
+    final dataList = await query.get();
+    return dataList.exists;
   }
 
   void clearCurrentPlanning() async {

@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:planningpoker/components/messaging/custom_dialog.dart';
 import 'package:planningpoker/components/messaging/custom_message.dart';
 import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
+import 'package:planningpoker/components/util/util.dart';
 import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/main/routes.dart';
@@ -28,6 +30,9 @@ class _LandingScreenState extends State<LandingScreen> {
   final TextEditingController _invitationCodeController = TextEditingController();
   final _user = User();
   var _planning = PlanningData();
+
+  var _info = Util.packageInfo;
+  var _initializing = true;
 
   Future<void> _setUserData({required BuildContext buildContext}) async {
     await showDialog(
@@ -169,7 +174,29 @@ class _LandingScreenState extends State<LandingScreen> {
 
   Widget _newPlanning() {
     return CustomScaffold(
-      title: 'Planning Poker',
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Text('Planning Poker'),
+          const SizedBox(width: 10),
+          Text(
+            'v${_info.version}-${_info.buildNumber}',
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
+              color: Theme.of(context).colorScheme.background,
+            ),
+          )
+        ],
+      ),
+      appBarActions: [
+        IconButton(
+            onPressed: () {
+              CustomDialog(context: context).informationDialog(
+                  message:
+                      'Desenvolvido por um programador entediado durante suas férias.\n\nImportante:\n1 - Evite colocar dados sensíveis nas descrições dos cards.\n2 - Plannings com mais de 5 dias serão excluídas\n\n Divirta-se');
+            },
+            icon: const Icon(Icons.question_mark))
+      ],
       body: Center(
         child: SingleChildScrollView(
           child: SizedBox(
@@ -221,7 +248,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       )
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -252,6 +279,11 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_initializing) {
+      Util.version.then((info) => setState(() => _info = info));
+      _initializing = false;
+    }
+
     var hiveController = HiveController();
 
     return FutureBuilder(

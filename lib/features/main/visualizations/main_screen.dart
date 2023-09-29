@@ -118,7 +118,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                                   if (customReturn.returnType == ReturnType.error) {
                                     CustomMessage.error(context, message: customReturn.message);
                                   } else {
-                                    Navigator.of(ctx).pop();
+                                    Navigator.of(ctx, rootNavigator: true).pop();
                                   }
                                 });
                               }
@@ -130,6 +130,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                             );
                             if (customReturn.returnType == ReturnType.error) {
                               CustomMessage.error(context, message: customReturn.message);
+                            } else {
+                              Navigator.of(ctx, rootNavigator: true).pop();
                             }
                           }
                         },
@@ -274,8 +276,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    story.status == StoryStatus.closed ?
-                    '${story.statusLabel} - ${story.points} pontos' : story.statusLabel,
+                    story.status == StoryStatus.closed ? '${story.statusLabel} - ${story.points} pontos' : story.statusLabel,
                     style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
@@ -495,9 +496,18 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             actions: [
               IconButton(
                   onPressed: () {
-                    Provider.of<PlanningPokerController>(context, listen: false).clearCurrentPlanning();
-                    Provider.of<UserController>(context, listen: false).clearCurrentUser();
-                    Navigator.of(context).popAndPushNamed(Routes.landingScreen);
+                    CustomDialog(context: context)
+                        .confirmationDialog(
+                      message:
+                          'Tem certeza que deseja abandona a partida?\n\nIsso fará com que seu acesso seja removido permanentemente.',
+                    )
+                        .then((response) {
+                      if (response == true) {
+                        Provider.of<PlanningPokerController>(context, listen: false).clearCurrentPlanning();
+                        Provider.of<UserController>(context, listen: false).clearCurrentUser();
+                        Navigator.of(context).popAndPushNamed(Routes.landingScreen);
+                      }
+                    });
                   },
                   icon: const Icon(Icons.exit_to_app))
             ],
