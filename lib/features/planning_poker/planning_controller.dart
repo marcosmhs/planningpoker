@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
+import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/planning_poker/planning_poker.dart';
 
 class PlanningPokerController with ChangeNotifier {
@@ -27,6 +28,9 @@ class PlanningPokerController with ChangeNotifier {
 
       _currentPlanning = PlanningData.fromMap(dataList.first);
 
+      var hiveController = HiveController();
+      hiveController.savePlanningData(planningData: _currentPlanning);
+
       return CustomReturn.sucess;
     } catch (e) {
       return CustomReturn.error('Erro! ${e.toString()}');
@@ -40,17 +44,25 @@ class PlanningPokerController with ChangeNotifier {
 
       _currentPlanning = PlanningData.fromMap(planningData.toMap());
 
+      var hiveController = HiveController();
+      hiveController.savePlanningData(planningData: _currentPlanning);
+
       return CustomReturn.sucess;
     } catch (e) {
       return CustomReturn.error(e.toString());
     }
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> get getPlanningData {
-    return FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(_currentPlanning.id).snapshots();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPlanningData({String planningId = ''}) {
+    return FirebaseFirestore.instance
+        .collection(_planningDataCollectionName)
+        .doc(planningId.isNotEmpty ? planningId : _currentPlanning.id)
+        .snapshots();
   }
 
-  void clearCurrentPlanning() {
+  void clearCurrentPlanning() async {
+    var hiveController = HiveController();
+    hiveController.clearPlanningDataHiveBox();
     _currentPlanning = PlanningData();
   }
 }

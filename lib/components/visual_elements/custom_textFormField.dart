@@ -26,6 +26,7 @@ class CustomTextEdit extends StatefulWidget {
   final int maxLines;
   final int? maxLength;
   final String mask;
+  final upperCase;
 
   const CustomTextEdit({
     Key? key,
@@ -51,6 +52,7 @@ class CustomTextEdit extends StatefulWidget {
     this.border,
     this.onTap,
     this.mask = '',
+    this.upperCase = false,
   }) : super(key: key);
 
   @override
@@ -73,6 +75,7 @@ class _CustomTextEditState extends State<CustomTextEdit> {
         children: [
           const SizedBox(height: 8),
           TextFormField(
+            textCapitalization: widget.upperCase ? TextCapitalization.characters : TextCapitalization.none,
             inputFormatters: widget.mask.isEmpty ? null : [maskFormatter],
             enabled: widget.enabled,
             obscureText: !widget.isPassword ? false : _hidePassword,

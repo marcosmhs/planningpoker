@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/components/messaging/custom_dialog.dart';
 import 'package:planningpoker/components/messaging/custom_message.dart';
@@ -16,17 +19,30 @@ import 'package:planningpoker/features/user/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  var _user = User();
+  var _plannigData = PlanningData();
+
+  MainScreen({
+    Key? key,
+    User? user,
+    PlanningData? planningData,
+  }) : super(key: key) {
+    if (user != null) _user = user;
+    if (planningData != null) _plannigData = planningData;
+  }
 
   @override
   State<MainScreen> createState() => _MainScreen();
 }
 
 class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
-  var _planningData = PlanningData();
   var _storyCardHeight = 130.0;
   final _storyCardWidht = 120.0;
+
+  var currentUser = User();
+  var currentPlanning = PlanningData();
 
   final List<Map<int, String>> avaliablesCards = [
     {0: 'Um café'},
@@ -45,11 +61,16 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _showStoryOptions({required BuildContext context, required Story story}) async {
-    if (!Provider.of<UserController>(context, listen: false).currentUser.creator) return;
+    if (!currentUser.creator) return;
     await showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
+          insetPadding: kIsWeb
+              ? MediaQuery.of(context).size.width <= 500
+                  ? EdgeInsets.zero
+                  : EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width <= 1000 ? 0 : 300)
+              : EdgeInsets.zero,
           scrollable: true,
           title: const Text('O que deseja fazer?'),
           titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
@@ -65,7 +86,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       child: ElevatedButton.icon(
                         onPressed: () {
                           Navigator.of(ctx).pop();
-                          Navigator.of(context).pushNamed(Routes.storyForm, arguments: {'story': story});
+                          Navigator.of(context).pushNamed(
+                            Routes.storyForm,
+                            arguments: {'story': story, 'planningData': currentPlanning},
+                          );
                         },
                         label: const Text('Editar'),
                         icon: const Icon(Icons.edit),
@@ -88,9 +112,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                             )).then((dialogReturn) {
                               if (dialogReturn == true) {
                                 story.status = StoryStatus.created;
-                                Provider.of<StoryController>(context, listen: false).save(story: story).then((customReturn) {
+                                Provider.of<StoryController>(context, listen: false)
+                                    .save(story: story, planningPokerId: currentPlanning.id)
+                                    .then((customReturn) {
                                   if (customReturn.returnType == ReturnType.error) {
-                                    // ignore: use_build_context_synchronously
                                     CustomMessage.error(context, message: customReturn.message);
                                   } else {
                                     Navigator.of(ctx).pop();
@@ -101,9 +126,9 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                           } else {
                             var customReturn = await Provider.of<StoryController>(context, listen: false).setStoryToVote(
                               story: story,
+                              planningPokerId: currentPlanning.id,
                             );
                             if (customReturn.returnType == ReturnType.error) {
-                              // ignore: use_build_context_synchronously
                               CustomMessage.error(context, message: customReturn.message);
                             }
                           }
@@ -113,7 +138,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  // cancel vote
+                  // Finalize vote
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ConstrainedBox(
@@ -129,9 +154,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                             )).then((dialogReturn) {
                               if (dialogReturn == true) {
                                 story.status = StoryStatus.votingFinished;
-                                Provider.of<StoryController>(context, listen: false).save(story: story).then((customReturn) {
+                                Provider.of<StoryController>(context, listen: false)
+                                    .save(story: story, planningPokerId: currentPlanning.id)
+                                    .then((customReturn) {
                                   if (customReturn.returnType == ReturnType.error) {
-                                    // ignore: use_build_context_synchronously
                                     CustomMessage.error(context, message: customReturn.message);
                                   } else {
                                     Navigator.of(ctx).pop();
@@ -140,11 +166,9 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                               }
                             });
                           } else {
-                            var customReturn = await Provider.of<StoryController>(context, listen: false).setStoryToVote(
-                              story: story,
-                            );
+                            var customReturn = await Provider.of<StoryController>(context, listen: false)
+                                .setStoryToVote(story: story, planningPokerId: currentPlanning.id);
                             if (customReturn.returnType == ReturnType.error) {
-                              // ignore: use_build_context_synchronously
                               CustomMessage.error(context, message: customReturn.message);
                             }
                           }
@@ -171,7 +195,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                             icon: const Icon(Icons.question_mark, size: 50),
                           )).then((dialogReturn) {
                             if (dialogReturn == true) {
-                              Provider.of<StoryController>(context, listen: false).delete(story: story);
+                              Provider.of<StoryController>(context, listen: false)
+                                  .delete(story: story, planningPokerId: currentPlanning.id);
                             }
                             Navigator.of(context).pop();
                           });
@@ -190,7 +215,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _newStory({required BuildContext context}) {
+  Widget _newStory({required BuildContext context, required PlanningData planningData}) {
     return Card(
       child: SizedBox(
         height: _storyCardHeight,
@@ -198,7 +223,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
         child: ClipOval(
           child: InkWell(
             splashColor: Theme.of(context).primaryColor,
-            onTap: () => Navigator.of(context).pushNamed(Routes.storyForm),
+            onTap: () => Navigator.of(context).pushNamed(Routes.storyForm, arguments: {'planningData': planningData}),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -246,6 +271,15 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    story.status == StoryStatus.closed ?
+                    '${story.statusLabel} - ${story.points} pontos' : story.statusLabel,
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                ),
+
                 //// url
                 //Padding(
                 //  padding: const EdgeInsets.all(8.0),
@@ -290,18 +324,23 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
       ),
       child: ClipOval(
         child: InkWell(
-          onTap: () {
+          onTap: () async {
             if (story.id.isEmpty) return;
+            var oldVote = await Provider.of<StoryController>(context, listen: false).getUserVote(
+              story: story,
+              user: currentUser,
+            );
 
-            CustomDialog(context: context)
-                .confirmationDialog(message: 'Confirma o voto ${vote == 0 ? 'um café' : vote}?')
-                .then((response) {
+            var message = oldVote.id.isEmpty
+                ? 'Confirma o voto ${vote == 0 ? 'um café' : vote}?'
+                : 'Trocar o voto de: ${oldVote.points == 0 ? 'um café' : oldVote.points} por ${vote == 0 ? 'um café' : vote}?';
+
+            CustomDialog(context: context).confirmationDialog(message: message).then((response) {
               if (response == true) {
                 Provider.of<StoryController>(context, listen: false).vote(
-                  storyVote: StoryVote(
-                    points: vote,
-                    storyId: story.id,
-                  ),
+                  storyVote: StoryVote(points: vote, storyId: story.id),
+                  user: currentUser,
+                  oldStoryVote: oldVote,
                 );
               }
             });
@@ -334,9 +373,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
   Widget _cardsForVote({required BuildContext context, required Story votingStory, required StoryVote storyVote}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      height: Provider.of<UserController>(context, listen: false).currentUser.creator
-          ? MediaQuery.of(context).size.height * 0.50
-          : MediaQuery.of(context).size.height * 0.68,
+      height: MediaQuery.of(context).size.height * (kIsWeb ? 0.70 : 0.68),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 150,
@@ -360,11 +397,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   Widget _castedVotes({required BuildContext context, required List<StoryVote> storyVotes}) {
     return Container(
-      color: Colors.amberAccent,
       padding: const EdgeInsets.all(8),
-      height: Provider.of<UserController>(context, listen: false).currentUser.creator
-          ? MediaQuery.of(context).size.height * 0.58
-          : MediaQuery.of(context).size.height * 0.68,
+      height: MediaQuery.of(context).size.height * 0.58,
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 150,
@@ -402,41 +436,63 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    currentUser = arguments['user'] ?? User();
+    currentPlanning = arguments['planningData'] ?? PlanningData();
+
+    if (widget._user.id.isNotEmpty) currentUser = widget._user;
+    if (widget._plannigData.id.isNotEmpty) currentPlanning = widget._plannigData;
+
     _storyCardHeight = MediaQuery.of(context).size.height * 0.19;
 
-    var user = Provider.of<UserController>(context, listen: false).currentUser;
+    if (currentUser.id.isEmpty) return const Text('');
+    if (currentPlanning.id.isEmpty) return const Text('');
+
     return StreamBuilder(
-      stream: Provider.of<PlanningPokerController>(context, listen: false).getPlanningData,
+      stream: Provider.of<PlanningPokerController>(context, listen: false).getPlanningData(planningId: currentPlanning.id),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) const Text('Parece que houve um erro, pois não há dados da planning e você está nesta tela');
-        if (snapshot.hasData) _planningData = PlanningData.fromDocument(snapshot.data!);
+        if (!snapshot.hasData) {
+          return const Text('Parece que houve um erro, pois não há dados da planning e você está nesta tela');
+        }
+
+        if (snapshot.hasData) currentPlanning = PlanningData.fromDocument(snapshot.data!);
+
         return CustomScaffold(
           // appbar
           appBar: AppBar(
-            title: GestureDetector(
-              onTap: () => Navigator.of(context).pushNamed(Routes.planningDataForm),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_planningData.name),
-                  Text(
-                    user.name,
-                    style: TextStyle(
-                      fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                      color: Theme.of(context).cardColor,
+            title: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(currentPlanning.name),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        if (currentUser.creator)
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pushNamed(
+                              Routes.planningDataForm,
+                              arguments: {'planningData': currentPlanning, 'user': currentUser},
+                            ),
+                            child: const Icon(Icons.edit, size: 20),
+                          ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
+                    Text(
+                      currentUser.name,
+                      style: TextStyle(
+                        fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                        color: Theme.of(context).cardColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             actions: [
-              IconButton(
-                  onPressed: () {
-                    var user = Provider.of<UserController>(context, listen: false).currentUser;
-                    user.creator = !user.creator;
-                    Provider.of<UserController>(context, listen: false).save(user: user);
-                  },
-                  icon: const Icon(Icons.person_add)),
               IconButton(
                   onPressed: () {
                     Provider.of<PlanningPokerController>(context, listen: false).clearCurrentPlanning();
@@ -447,7 +503,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             ],
           ),
           body: StreamBuilder<QuerySnapshot>(
-            stream: Provider.of<StoryController>(context, listen: false).getStories,
+            stream: Provider.of<StoryController>(context, listen: false).getStories(planningPokerId: currentPlanning.id),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Ocorreu um erro na consulta da escala');
@@ -458,29 +514,55 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
               List<Story> stories = [];
               if (snapshot.hasData) {
                 stories = snapshot.data!.docs.map((e) => Story.fromDocument(e)).toList();
+                stories.sort(
+                  (a, b) => ((a.status == StoryStatus.voting) == (b.status == StoryStatus.voting)
+                      ? 0
+                      : ((a.status == StoryStatus.voting) ? -1 : 1)),
+                );
               }
               var votingStory = stories
                       .where((story) => story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished)
                       .firstOrNull ??
                   Story();
-              //stories.sort(
-              //  (a, b) => (a.voting == b.voting ? 0 : (a.voting ? -1 : 1)),
-              //);
-
-              var currentUser = Provider.of<UserController>(context, listen: false).currentUser;
 
               if (stories.isEmpty) {
-                return _newStory(context: context);
+                if (currentUser.creator) {
+                  return _newStory(context: context, planningData: currentPlanning);
+                } else {
+                  return const Text('');
+                }
               } else {
                 return Column(
                   children: [
-                    // check if there is a story to be voted.
+                    // Stories
+                    SizedBox(
+                      height: _storyCardHeight + 5,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: stories.length,
+                        itemBuilder: (context, index) {
+                          if (currentUser.creator) {
+                            return index == 0
+                                ? Row(
+                                    children: [
+                                      _newStory(context: context, planningData: currentPlanning),
+                                      _story(context: context, story: stories[index]),
+                                    ],
+                                  )
+                                : _story(context: context, story: stories[index]);
+                          } else {
+                            return _story(context: context, story: stories[index]);
+                          }
+                        },
+                      ),
+                    ),
                     votingStory.id.isEmpty
-                        // if not, display wait message
                         ? _waitForVotingMessage()
-                        // else show de cards for players or the votes for the creator of the planning
                         : StreamBuilder<QuerySnapshot>(
-                            stream: Provider.of<StoryController>(context, listen: false).getStoryVotes(story: votingStory),
+                            stream: Provider.of<StoryController>(context, listen: false).getStoryVotes(
+                              story: votingStory,
+                              planningId: currentPlanning.id,
+                            ),
                             builder: (context, snapshot) {
                               List<StoryVote> storyVotes = [];
                               if (snapshot.hasData) {
@@ -488,52 +570,43 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                               }
 
                               var storyVote =
-                                  storyVotes.where((vote) => vote.userid == currentUser.id).firstOrNull ?? StoryVote();
+                                  storyVotes.where((vote) => vote.userId == currentUser.id).firstOrNull ?? StoryVote();
 
-                              var votesPoints = storyVotes.map((e) => e.points).toList();
-                              var votesPointsTotal = votesPoints.fold(0, (p, c) => p + c);
                               var votesAvarege = 0.0;
-                              votesPoints.reduce(min);
-                              if (votesPointsTotal > 0) {
+                              var minVote = 0;
+                              var maxVote = 0;
+
+                              if (storyVotes.isNotEmpty) {
+                                var votesPoints = storyVotes.map((e) => e.points).toList();
+                                var votesPointsTotal = votesPoints.fold(0, (p, c) => p + c);
                                 votesAvarege = votesPointsTotal / votesPoints.length;
+                                minVote = votesPoints.reduce(min);
+                                maxVote = votesPoints.reduce(max);
                               }
 
                               return Column(
                                 children: [
-                                  // Stories
-                                  SizedBox(
-                                    height: _storyCardHeight + 5,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: stories.length,
-                                      itemBuilder: (context, index) {
-                                        return index == 0
-                                            ? Row(
-                                                children: [
-                                                  _newStory(context: context),
-                                                  _story(context: context, story: stories[index]),
-                                                ],
-                                              )
-                                            : _story(context: context, story: stories[index]);
-                                      },
-                                    ),
-                                  ),
-                                  // voite data
-                                  if (currentUser.creator && storyVotes.isNotEmpty)
+                                  // vote data
+                                  if (((currentUser.creator || currentUser.isSpectator) && storyVotes.isNotEmpty) ||
+                                      (currentUser.isPlayer && votingStory.status == StoryStatus.votingFinished))
                                     ListTile(
                                       leading: Text(
-                                        'Z',
+                                        '${votesAvarege.round()}',
                                         style: Theme.of(context).textTheme.headlineLarge,
                                         textAlign: TextAlign.center,
                                       ),
-                                      title: Text('Média dos voto: ${votesAvarege.round()} ($votesAvarege)'),
-                                      subtitle:
-                                          Text('Menor Voto: ${votesPoints.reduce(min)} / Maior Voto ${votesPoints.reduce(max)}'),
+                                      title: Text('Média dos votos: ${votesAvarege.round()} ($votesAvarege)'),
+                                      subtitle: Text('Menor Voto: $minVote / Maior Voto $maxVote'),
                                     ),
-                                  if (currentUser.creator || currentUser.role == Role.spectator)
+
+                                  if ((currentUser.creator || currentUser.isSpectator) ||
+                                      (currentUser.isPlayer && votingStory.status == StoryStatus.votingFinished))
                                     _castedVotes(context: context, storyVotes: storyVotes),
 
-                                  if (!currentUser.creator)
+                                  if (!currentUser.creator &&
+                                      currentUser.isPlayer &&
+                                      votingStory.id.isNotEmpty &&
+                                      votingStory.status != StoryStatus.votingFinished)
                                     _cardsForVote(
                                       context: context,
                                       votingStory: votingStory,

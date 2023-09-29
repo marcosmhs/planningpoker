@@ -1,13 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
-enum Role { spectator, player }
+part 'user.g.dart';
 
+@HiveType(typeId: 2)
+enum Role {
+  @HiveField(0)
+  spectator,
+  @HiveField(1)
+  player
+}
+
+@HiveType(typeId: 1)
 class User {
+  @HiveField(0)
   late String id;
+  @HiveField(1)
   late String planningPokerId;
+  @HiveField(2)
   late String name;
+  @HiveField(3)
   late bool creator;
+  @HiveField(4)
   late Role role;
+  @HiveField(5)
   late DateTime? createDate;
 
   User({
@@ -50,6 +66,14 @@ class User {
     };
 
     return r;
+  }
+
+  bool get isPlayer {
+    return role == Role.player;
+  }
+
+  bool get isSpectator {
+    return role == Role.spectator;
   }
 
   String get roleLabel {

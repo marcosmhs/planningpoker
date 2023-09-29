@@ -3,19 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/foundation.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/util/uid_generator.dart';
+import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/user/user.dart';
 
 class UserController with ChangeNotifier {
-  final String _planningDataCollectionName = 'planningData';
-  final String _userCollectionName = 'user';
+  final _planningDataCollectionName = 'planningData';
+  final _userCollectionName = 'user';
   late User _currentUser;
 
-  UserController() {
-    _currentUser = User();
-  }
-
   User get currentUser => User.fromMap(_currentUser.toMap());
-//
+
   //Future<bool> _userNameExists({required User user}) async {
   //  var query = FirebaseFirestore.instance
   //      .collection(_planningDataCollectionName)
@@ -49,6 +46,9 @@ class UserController with ChangeNotifier {
 
       _currentUser = User.fromMap(user.toMap());
 
+      var hiveController = HiveController();
+      hiveController.saveUser(user: _currentUser);
+
       return CustomReturn.sucess;
     } on fb_auth.FirebaseException catch (e) {
       return CustomReturn.error(e.code);
@@ -57,7 +57,9 @@ class UserController with ChangeNotifier {
     }
   }
 
-  void clearCurrentUser() {
+  void clearCurrentUser() async {
+    var hiveController = HiveController();
+    hiveController.clearUserHiveBox();
     _currentUser = User();
   }
 }

@@ -4,7 +4,7 @@ class StoryVote {
   late String id;
   late String planningPokerId;
   late String storyId;
-  late String userid;
+  late String userId;
   late String userName;
   late int points;
 
@@ -12,7 +12,7 @@ class StoryVote {
     this.id = '',
     this.planningPokerId = '',
     this.storyId = '',
-    this.userid = '',
+    this.userId = '',
     this.userName = '',
     this.points = 0,
   });
@@ -29,7 +29,7 @@ class StoryVote {
       id: map['id'] ?? '',
       planningPokerId: map['planningPokerId'] ?? '',
       storyId: map['storyId'] ?? '',
-      userid: map['userid'] ?? '',
+      userId: map['userId'] ?? '',
       userName: map['userName'] ?? '',
       points: map['points'] ?? 0,
     );
@@ -42,7 +42,7 @@ class StoryVote {
       'id': id,
       'planningPokerId': planningPokerId,
       'storyId': storyId,
-      'userid': userid,
+      'userId': userId,
       'userName': userName,
       'points': points,
     };

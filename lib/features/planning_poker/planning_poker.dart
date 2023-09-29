@@ -1,9 +1,17 @@
+import 'package:hive/hive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+part 'planning_poker.g.dart';
+
+@HiveType(typeId: 0)
 class PlanningData {
+  @HiveField(0)
   late String id;
+  @HiveField(1)
   late String name;
+  @HiveField(2)
   late String invitationCode;
+  @HiveField(3)
   late DateTime? createDate;
 
   PlanningData({

@@ -68,4 +68,19 @@ class Story {
         return StoryStatus.closed;
     }
   }
+
+  String get statusLabel {
+    switch (status) {
+      case StoryStatus.created:
+        return 'Aguardando';
+      case StoryStatus.closed:
+        return 'Encerrado';
+      case StoryStatus.voting:
+        return 'Em votação';
+      case StoryStatus.votingFinished:
+        return 'Votação encerrada';
+      default:
+        return 'Encerrado';
+    }
+  }
 }

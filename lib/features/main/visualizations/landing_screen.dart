@@ -8,8 +8,11 @@ import 'package:planningpoker/components/messaging/custom_message.dart';
 import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
+import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/main/routes.dart';
+import 'package:planningpoker/features/main/visualizations/main_screen.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
+import 'package:planningpoker/features/planning_poker/planning_poker.dart';
 import 'package:planningpoker/features/user/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +27,7 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   final TextEditingController _invitationCodeController = TextEditingController();
   final _user = User();
+  var _planning = PlanningData();
 
   Future<void> _setUserData({required BuildContext buildContext}) async {
     await showDialog(
@@ -110,12 +114,14 @@ class _LandingScreenState extends State<LandingScreen> {
                 if (_user.name.isEmpty) {
                   CustomMessage.error(context, message: 'Informe seu nome');
                 } else {
-                  _user.planningPokerId = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning.id;
+                  _user.planningPokerId = _planning.id;
                   var customReturn = await userController.save(user: _user);
                   if (customReturn.returnType == ReturnType.error) {
-                    FocusScopeNode currentFocus = FocusScope.of(ctx);
-                    if (!currentFocus.hasPrimaryFocus) {
-                      currentFocus.unfocus();
+                    if (!kIsWeb) {
+                      FocusScopeNode currentFocus = FocusScope.of(ctx);
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
                     }
 
                     CustomMessage(
@@ -127,7 +133,10 @@ class _LandingScreenState extends State<LandingScreen> {
                       toastGravity: ToastGravity.TOP,
                     );
                   } else {
-                    Navigator.of(context).popAndPushNamed(Routes.mainScreen);
+                    Navigator.of(context).popAndPushNamed(Routes.mainScreen, arguments: {
+                      'user': _user,
+                      'planningData': _planning,
+                    });
                     Navigator.of(ctx).pop();
                   }
                 }
@@ -153,18 +162,17 @@ class _LandingScreenState extends State<LandingScreen> {
       CustomMessage.error(context, message: customReturn.message);
       return;
     }
+    _planning = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning;
 
     await _setUserData(buildContext: context);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
+  Widget _newPlanning() {
     return CustomScaffold(
       title: 'Planning Poker',
       body: Center(
         child: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             width: kIsWeb
                 ? MediaQuery.of(context).size.width <= 750
                     ? MediaQuery.of(context).size.width
@@ -219,6 +227,55 @@ class _LandingScreenState extends State<LandingScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _errorScreen({required String errorMessage}) {
+    return CustomScaffold(
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Fatal error!'),
+            const SizedBox(height: 20),
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var hiveController = HiveController();
+
+    return FutureBuilder(
+      future: hiveController.chechLocalData(),
+      builder: (ctx, snapshot) {
+        // enquanto está carregando
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+          // em caso de erro
+        } else {
+          if (snapshot.error != null) {
+            return _errorScreen(errorMessage: snapshot.error.toString());
+            // ao final do processo
+          } else {
+            // irá avaliar se o usuário possui login ou não
+            return hiveController.localUser.id.isEmpty
+                ? _newPlanning()
+                : MainScreen(
+                    user: hiveController.localUser,
+                    planningData: hiveController.localPlanningData,
+                  );
+          }
+        }
+      },
     );
   }
 }

@@ -13,19 +13,17 @@ class StoryController with ChangeNotifier {
   final String _storyCollectionName = 'story';
   final String _storyVoteCollectionName = 'storyVote';
 
-  final User user;
+  StoryController();
 
-  StoryController(this.user);
-
-  Future<CustomReturn> save({required Story story}) async {
+  Future<CustomReturn> save({required Story story, required String planningPokerId}) async {
     try {
       if (story.id.isEmpty) {
         story.id = UidGenerator.firestoreUid;
-        story.planningPokerId = user.planningPokerId;
+        story.planningPokerId = planningPokerId;
       }
       await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
-          .doc(user.planningPokerId)
+          .doc(planningPokerId)
           .collection(_storyCollectionName)
           .doc(story.id)
           .set(story.toMap());
@@ -37,11 +35,11 @@ class StoryController with ChangeNotifier {
     }
   }
 
-  Future<CustomReturn> delete({required Story story}) async {
+  Future<CustomReturn> delete({required Story story, required String planningPokerId}) async {
     try {
       await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
-          .doc(user.planningPokerId)
+          .doc(planningPokerId)
           .collection(_storyCollectionName)
           .doc(story.id)
           .delete();
@@ -53,11 +51,11 @@ class StoryController with ChangeNotifier {
     }
   }
 
-  Future<CustomReturn> setStoryToVote({required Story story}) async {
+  Future<CustomReturn> setStoryToVote({required Story story, required String planningPokerId}) async {
     try {
       var query = await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
-          .doc(user.planningPokerId)
+          .doc(planningPokerId)
           .collection(_storyCollectionName)
           .where('voting', isEqualTo: true)
           .get();
@@ -67,20 +65,32 @@ class StoryController with ChangeNotifier {
       }
 
       story.status = StoryStatus.voting;
-      return save(story: story);
+      return save(story: story, planningPokerId: planningPokerId);
     } catch (e) {
       return CustomReturn.error(e.toString());
     }
   }
 
-  Future<CustomReturn> vote({required StoryVote storyVote}) async {
+  Future<CustomReturn> vote({required StoryVote storyVote, required User user, StoryVote? oldStoryVote}) async {
     try {
       if (storyVote.id.isEmpty) {
         storyVote.id = UidGenerator.firestoreUid;
         storyVote.planningPokerId = user.planningPokerId;
-        storyVote.userid = user.id;
+        storyVote.userId = user.id;
         storyVote.userName = user.name;
       }
+
+      if (oldStoryVote != null && oldStoryVote.id.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection(_planningDataCollectionName)
+            .doc(user.planningPokerId)
+            .collection(_storyCollectionName)
+            .doc(oldStoryVote.storyId)
+            .collection(_storyVoteCollectionName)
+            .doc(oldStoryVote.id)
+            .delete();
+      }
+
       await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
           .doc(user.planningPokerId)
@@ -97,7 +107,7 @@ class StoryController with ChangeNotifier {
     }
   }
 
-  Future<StoryVote> getUserVote({required Story story}) async {
+  Future<StoryVote> getUserVote({required Story story, required User user}) async {
     var query = await FirebaseFirestore.instance
         .collection(_planningDataCollectionName)
         .doc(user.planningPokerId)
@@ -109,21 +119,21 @@ class StoryController with ChangeNotifier {
 
     var dataList = query.docs.map((doc) => doc.data()).toList();
 
-    return StoryVote.fromMap(dataList.first);
+    return dataList.isEmpty ? StoryVote() : StoryVote.fromMap(dataList.first);
   }
 
-  Stream<QuerySnapshot<Object?>> get getStories {
+  Stream<QuerySnapshot<Object?>> getStories({required String planningPokerId}) {
     return FirebaseFirestore.instance
         .collection(_planningDataCollectionName)
-        .doc(user.planningPokerId)
+        .doc(planningPokerId)
         .collection(_storyCollectionName)
         .snapshots();
   }
 
-  Stream<QuerySnapshot<Object?>> getStoryVotes({required Story story}) {
+  Stream<QuerySnapshot<Object?>> getStoryVotes({required Story story, String planningId = ''}) {
     return FirebaseFirestore.instance
         .collection(_planningDataCollectionName)
-        .doc(user.planningPokerId)
+        .doc(planningId)
         .collection(_storyCollectionName)
         .doc(story.id)
         .collection(_storyVoteCollectionName)
