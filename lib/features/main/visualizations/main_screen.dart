@@ -104,7 +104,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
                       constraints: BoxConstraints.tightFor(height: 45, width: MediaQuery.of(ctx).size.width * 0.70),
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          if (votingStory.id != story.id) {
+                          if (votingStory.id.isNotEmpty && votingStory.id != story.id) {
                             CustomDialog(context: context)
                                 .errorMessage(message: 'Já existe uma história em votação, é necssário finalizá-la antes')
                                 .then((value) => Navigator.of(ctx, rootNavigator: true).pop());

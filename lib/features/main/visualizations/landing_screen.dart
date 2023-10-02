@@ -143,7 +143,6 @@ class _LandingScreenState extends State<LandingScreen> {
                       'user': _user,
                       'planningData': _planning,
                     });
-                    Navigator.of(ctx).pop();
                   }
                 }
               },

@@ -123,7 +123,6 @@ class _StoryFormState extends State<StoryForm> {
                       onSave: (value) => story.description = value ?? '',
                       maxLines: 3,
                       prefixIcon: Icons.receipt,
-                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         final finalValue = value ?? '';
