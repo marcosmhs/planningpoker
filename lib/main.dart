@@ -1,3 +1,4 @@
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,26 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+class XDPathUrlStrategy extends HashUrlStrategy {
+  // Creates an instance of [PathUrlStrategy].
+  // The [PlatformLocation] parameter is useful for testing to mock out browser interactions.
+  XDPathUrlStrategy([
+    super.platformLocation,
+  ]) : _basePath = stripTrailingSlash(extractPathname(checkBaseHref(
+          platformLocation.getBaseHref(),
+        )));
+
+  final String _basePath;
+
+  @override
+  String prepareExternalUrl(String internalUrl) {
+    if (internalUrl.isNotEmpty && !internalUrl.startsWith('/')) {
+      internalUrl = '/$internalUrl';
+    }
+    return '$_basePath/';
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,14 +53,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: PlanningPoker(),
-    supportedLocales: [
-      Locale('en', ''),
-      Locale('pt-br', ''),
-    ],
-  ));
+  setUrlStrategy(XDPathUrlStrategy());
+
+  runApp(const PlanningPoker());
 }
 
 class PlanningPoker extends StatefulWidget {
