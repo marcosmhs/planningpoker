@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/visualizations/landing_screen.dart';
 import 'package:planningpoker/features/main/visualizations/main_screen.dart';
 import 'package:planningpoker/features/main/visualizations/screen_not_found.dart';
+import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
-import 'package:planningpoker/features/planning_poker/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_data_form.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
-import 'package:planningpoker/features/story/story_form.dart';
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/story/visualizations/story_form.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -90,7 +90,7 @@ class _Home extends State<PlanningPoker> {
         title: 'Planning Poker',
         routes: {
           Routes.landingScreen: (ctx) => const LandingScreen(),
-          Routes.mainScreen: (ctx) => MainScreen(),
+          Routes.mainScreen: (ctx) => const MainScreen(),
           Routes.planningDataForm: (ctx) => const PlanningDataForm(),
           Routes.storyForm: (ctx) => const StoryForm(),
         },

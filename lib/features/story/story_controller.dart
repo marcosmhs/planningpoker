@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/util/uid_generator.dart';
-import 'package:planningpoker/features/story/story.dart';
-import 'package:planningpoker/features/story/story_vote.dart';
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/story/models/story.dart';
+import 'package:planningpoker/features/story/models/story_vote.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 
 class StoryController with ChangeNotifier {
   final String _planningDataCollectionName = 'planningData';

@@ -7,9 +7,10 @@ import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/visual_elements/buttons_line.dart';
 import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
-import 'package:planningpoker/features/planning_poker/planning_poker.dart';
-import 'package:planningpoker/features/story/story.dart';
+import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
+import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
@@ -22,8 +23,10 @@ class StoryForm extends StatefulWidget {
 }
 
 class _StoryFormState extends State<StoryForm> {
-  var story = Story();
-  var planningData = PlanningData();
+  var _story = Story();
+  var _planningData = PlanningData();
+  var _user = User();
+
   bool _initializing = true;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -51,8 +54,8 @@ class _StoryFormState extends State<StoryForm> {
       CustomReturn retorno;
       try {
         // remove a marcação de história em votação
-        if (story.status == StoryStatus.votingFinished) story.status = StoryStatus.closed;
-        retorno = await storyController.save(story: story, planningPokerId: planningData.id);
+        if (_story.status == StoryStatus.votingFinished) _story.status = StoryStatus.closed;
+        retorno = await storyController.save(story: _story, planningPokerId: _planningData.id);
         if (retorno.returnType == ReturnType.sucess) {
           Navigator.of(context).pop();
         } else {
@@ -68,18 +71,23 @@ class _StoryFormState extends State<StoryForm> {
   Widget build(BuildContext context) {
     if (_initializing) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
-      story = arguments['story'] ?? Story();
-      planningData = arguments['planningData'] ?? PlanningData();
+      _story = arguments['story'] ?? Story();
+      _planningData = arguments['planningData'] ?? PlanningData();
+      _user = arguments['user'] ?? User();
 
-      _nameController.text = story.name;
-      _urlController.text = story.url;
-      _descriptionController.text = story.description;
-      _pointsController.text = story.points.toString();
+      _nameController.text = _story.name;
+      _urlController.text = _story.url;
+      _descriptionController.text = _story.description;
+      _pointsController.text = _story.points.toString();
       _initializing = false;
     }
 
     return CustomScaffold(
-      title: Text(story.id.isEmpty ? 'Nova história' : 'Alterar história'),
+      title: Text(_user.creator
+          ? _story.id.isEmpty
+              ? 'Nova história'
+              : 'Alterar história'
+          : 'Detalhes da história'),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
@@ -103,7 +111,7 @@ class _StoryFormState extends State<StoryForm> {
                       nextFocusNode: _descriptionFocus,
                       labelText: 'Nome da história',
                       hintText: 'Nome da história',
-                      onSave: (value) => story.name = value ?? '',
+                      onSave: (value) => _story.name = value ?? '',
                       prefixIcon: Icons.arrow_forward,
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -120,7 +128,7 @@ class _StoryFormState extends State<StoryForm> {
                       nextFocusNode: _urlFocus,
                       labelText: 'Resumo',
                       hintText: 'Resumo',
-                      onSave: (value) => story.description = value ?? '',
+                      onSave: (value) => _story.description = value ?? '',
                       maxLines: 3,
                       prefixIcon: Icons.receipt,
                       textInputAction: TextInputAction.next,
@@ -142,14 +150,14 @@ class _StoryFormState extends State<StoryForm> {
                     //  textInputAction: TextInputAction.next,
                     //),
                     // Points
-                    if (story.status != StoryStatus.created || story.points != 0)
+                    if (_story.status != StoryStatus.created || _story.points != 0)
                       CustomTextEdit(
                         context: context,
                         controller: _pointsController,
                         keyboardType: TextInputType.number,
                         labelText: 'Pontos',
                         hintText: 'Pontos da a história',
-                        onSave: (value) => story.points = int.tryParse(value ?? '') ?? 0,
+                        onSave: (value) => _story.points = int.tryParse(value ?? '') ?? 0,
                         prefixIcon: Icons.numbers,
                         textInputAction: TextInputAction.send,
                       ),
@@ -158,10 +166,11 @@ class _StoryFormState extends State<StoryForm> {
                     ButtonsLine(
                       buttons: [
                         Button(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
-                        Button(
-                          label: story.status == StoryStatus.votingFinished ? 'Concluir história' : 'Salvar',
-                          onPressed: _submit,
-                        ),
+                        if (_user.creator)
+                          Button(
+                            label: _story.status == StoryStatus.votingFinished ? 'Concluir história' : 'Salvar',
+                            onPressed: _submit,
+                          ),
                       ],
                     ),
                   ],

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/components/util/uid_generator.dart';
 import 'package:planningpoker/features/main/hive_controller.dart';
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 
 class UserController with ChangeNotifier {
   final _planningDataCollectionName = 'planningData';

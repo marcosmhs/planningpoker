@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
-import 'package:planningpoker/features/planning_poker/planning_poker.dart';
 
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 
 class HiveController with ChangeNotifier {
   final _userHiveBoxName = 'user';

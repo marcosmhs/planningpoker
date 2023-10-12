@@ -10,9 +10,9 @@ import 'package:planningpoker/components/visual_elements/buttons_line.dart';
 import 'package:planningpoker/components/visual_elements/custom_checkbox.dart';
 import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/main/routes.dart';
-import 'package:planningpoker/features/planning_poker/planning_poker.dart';
+import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 
 // ignore: depend_on_referenced_packages

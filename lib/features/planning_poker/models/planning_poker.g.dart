@@ -21,13 +21,14 @@ class PlanningDataAdapter extends TypeAdapter<PlanningData> {
       name: fields[1] as String,
       invitationCode: fields[2] as String,
       createDate: fields[3] as DateTime?,
+      othersCanCreateStories: fields[4] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlanningData obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class PlanningDataAdapter extends TypeAdapter<PlanningData> {
       ..writeByte(2)
       ..write(obj.invitationCode)
       ..writeByte(3)
-      ..write(obj.createDate);
+      ..write(obj.createDate)
+      ..writeByte(4)
+      ..write(obj.othersCanCreateStories);
   }
 
   @override

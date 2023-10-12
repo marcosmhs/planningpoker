@@ -13,9 +13,9 @@ import 'package:planningpoker/components/visual_elements/custom_textFormField.da
 import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/main/visualizations/main_screen.dart';
+import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
-import 'package:planningpoker/features/planning_poker/planning_poker.dart';
-import 'package:planningpoker/features/user/user.dart';
+import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +29,7 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   final TextEditingController _invitationCodeController = TextEditingController();
   final _user = User();
-  var _planning = PlanningData();
+  var _planningData = PlanningData();
 
   var _info = Util.packageInfo;
   var _initializing = true;
@@ -119,8 +119,8 @@ class _LandingScreenState extends State<LandingScreen> {
                 if (_user.name.isEmpty) {
                   CustomMessage.error(context, message: 'Informe seu nome');
                 } else {
-                  _user.planningPokerId = _planning.id;
-                  if (_user.isSpectator) _user.creator = _planning.othersCanCreateStories;
+                  _user.planningPokerId = _planningData.id;
+                  if (_user.isSpectator) _user.creator = _planningData.othersCanCreateStories;
                   var customReturn = await userController.save(user: _user);
                   if (customReturn.returnType == ReturnType.error) {
                     if (!kIsWeb) {
@@ -141,7 +141,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   } else {
                     Navigator.of(context).popAndPushNamed(Routes.mainScreen, arguments: {
                       'user': _user,
-                      'planningData': _planning,
+                      'planningData': _planningData,
                     });
                   }
                 }
@@ -167,7 +167,7 @@ class _LandingScreenState extends State<LandingScreen> {
       CustomMessage.error(context, message: customReturn.message);
       return;
     }
-    _planning = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning;
+    _planningData = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning;
 
     await _setUserData(buildContext: context);
   }
@@ -209,7 +209,7 @@ class _LandingScreenState extends State<LandingScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('O que que fazer?', style: Theme.of(context).textTheme.headlineLarge),
+                  child: Text('O que deseja fazer?', style: Theme.of(context).textTheme.headlineLarge),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 Padding(
@@ -295,6 +295,8 @@ class _LandingScreenState extends State<LandingScreen> {
           // em caso de erro
         } else {
           if (snapshot.error != null) {
+            hiveController.clearPlanningDataHiveBox();
+            hiveController.clearUserHiveBox();
             return _errorScreen(errorMessage: snapshot.error.toString());
             // ao final do processo
           } else {
