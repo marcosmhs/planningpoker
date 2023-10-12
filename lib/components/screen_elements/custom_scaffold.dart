@@ -63,9 +63,21 @@ class CustomScaffold extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Desenvolvido por Marcos H. Silva',
-                      style: TextStyle(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize, color: Colors.black54),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Desenvolvido por ',
+                          style: TextStyle(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize, color: Colors.black54),
+                        ),
+                        InkWell(
+                          onTap: () => _launchUrl(url: 'https://www.marcosmhs.com.br'),
+                          child: Text(
+                            'Marcos H. Silva',
+                            style: TextStyle(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize, color: Colors.black54),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
