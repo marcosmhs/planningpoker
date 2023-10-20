@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/components/messaging/custom_dialog.dart';
 import 'package:planningpoker/consts.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:teb_package/messaging/teb_custom_dialog.dart';
 
 class VoteCard extends StatefulWidget {
   final BuildContext context;
@@ -105,7 +105,7 @@ class _VoteCardState extends State<VoteCard> {
                 : 'Trocar o voto de: ${oldVote.points == 0 ? 'um café' : oldVote.points} por ${widget.vote == 0 ? 'um café' : widget.vote}?';
 
             // ignore: use_build_context_synchronously
-            CustomDialog(context: context).confirmationDialog(message: message).then((response) {
+            TebCustomDialog(context: context).confirmationDialog(message: message).then((response) {
               if (response == true) {
                 StoryController().vote(
                   storyVote: StoryVote(points: widget.vote, storyId: widget.story.id),

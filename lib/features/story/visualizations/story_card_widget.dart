@@ -2,14 +2,14 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/components/messaging/custom_dialog.dart';
-import 'package:planningpoker/components/messaging/custom_message.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:teb_package/messaging/teb_custom_dialog.dart';
+import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/util/teb_return.dart';
 
 class StoryCard extends StatefulWidget {
   final Size size;
@@ -89,13 +89,13 @@ class _StoryCardState extends State<StoryCard> {
         child: ElevatedButton.icon(
           onPressed: () async {
             if (widget.votingStory.id.isNotEmpty && widget.votingStory.id != story.id) {
-              CustomDialog(context: context)
+              TebCustomDialog(context: context)
                   .errorMessage(message: 'Já existe uma história em votação, é necssário finalizá-la antes')
                   .then((value) => Navigator.of(dialogContext, rootNavigator: true).pop());
               return;
             }
             if (story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished) {
-              (CustomDialog(context: context).customdialog(
+              (TebCustomDialog(context: context).customdialog(
                 message: 'Esta história já está em votacão, deseja cancelar a votação dela?',
                 yesButtonText: 'Sim',
                 noButtonText: 'Não',
@@ -104,8 +104,8 @@ class _StoryCardState extends State<StoryCard> {
                 if (dialogReturn == true) {
                   story.status = StoryStatus.created;
                   StoryController().save(story: story, planningPokerId: widget.planningData.id).then((customReturn) {
-                    if (customReturn.returnType == ReturnType.error) {
-                      CustomMessage.error(context, message: customReturn.message);
+                    if (customReturn.returnType == TebReturnType.error) {
+                      TebCustomMessage.error(context, message: customReturn.message);
                     } else {
                       Navigator.of(dialogContext, rootNavigator: true).pop();
                     }
@@ -117,8 +117,8 @@ class _StoryCardState extends State<StoryCard> {
                 story: story,
                 planningPokerId: widget.planningData.id,
               );
-              if (customReturn.returnType == ReturnType.error) {
-                CustomMessage.error(context, message: customReturn.message);
+              if (customReturn.returnType == TebReturnType.error) {
+                TebCustomMessage.error(context, message: customReturn.message);
               } else {
                 Navigator.of(dialogContext, rootNavigator: true).pop();
               }
@@ -139,7 +139,7 @@ class _StoryCardState extends State<StoryCard> {
         child: ElevatedButton.icon(
           onPressed: () async {
             if (story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished) {
-              (CustomDialog(context: context).customdialog(
+              (TebCustomDialog(context: context).customdialog(
                 message: 'Confirma a finalização da votação? Após isso ninguém mais poderá lançar seus votos?',
                 yesButtonText: 'Sim',
                 noButtonText: 'Não',
@@ -149,8 +149,8 @@ class _StoryCardState extends State<StoryCard> {
                   if (dialogReturn == true) {
                     story.status = StoryStatus.votingFinished;
                     StoryController().save(story: story, planningPokerId: widget.planningData.id).then((customReturn) {
-                      if (customReturn.returnType == ReturnType.error) {
-                        CustomMessage.error(context, message: customReturn.message);
+                      if (customReturn.returnType == TebReturnType.error) {
+                        TebCustomMessage.error(context, message: customReturn.message);
                       } else {
                         Navigator.of(dialogContext).pop();
                       }
@@ -163,8 +163,8 @@ class _StoryCardState extends State<StoryCard> {
                 story: story,
                 planningPokerId: widget.planningData.id,
               );
-              if (customReturn.returnType == ReturnType.error) {
-                CustomMessage.error(context, message: customReturn.message);
+              if (customReturn.returnType == TebReturnType.error) {
+                TebCustomMessage.error(context, message: customReturn.message);
               }
             }
           },
@@ -185,7 +185,7 @@ class _StoryCardState extends State<StoryCard> {
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
           onPressed: () async {
-            (CustomDialog(context: context).customdialog(
+            (TebCustomDialog(context: context).customdialog(
               message: 'Deseja realmente excluir esta história?',
               yesButtonText: 'Sim',
               noButtonText: 'Não',

@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
-import 'package:planningpoker/components/util/uid_generator.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_uid_generator.dart';
 
 class StoryController with ChangeNotifier {
   final String _planningDataCollectionName = 'planningData';
@@ -15,10 +15,10 @@ class StoryController with ChangeNotifier {
 
   StoryController();
 
-  Future<CustomReturn> save({required Story story, required String planningPokerId}) async {
+  Future<TebCustomReturn> save({required Story story, required String planningPokerId}) async {
     try {
       if (story.id.isEmpty) {
-        story.id = UidGenerator.firestoreUid;
+        story.id = TebUidGenerator.firestoreUid;
         story.planningPokerId = planningPokerId;
       }
       await FirebaseFirestore.instance
@@ -29,13 +29,13 @@ class StoryController with ChangeNotifier {
           .set(story.toMap());
 
       notifyListeners();
-      return CustomReturn.sucess;
+      return TebCustomReturn.sucess;
     } catch (e) {
-      return CustomReturn.error(e.toString());
+      return TebCustomReturn.error(e.toString());
     }
   }
 
-  Future<CustomReturn> delete({required Story story, required String planningPokerId}) async {
+  Future<TebCustomReturn> delete({required Story story, required String planningPokerId}) async {
     try {
       await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
@@ -45,13 +45,13 @@ class StoryController with ChangeNotifier {
           .delete();
 
       notifyListeners();
-      return CustomReturn.sucess;
+      return TebCustomReturn.sucess;
     } catch (e) {
-      return CustomReturn.error(e.toString());
+      return TebCustomReturn.error(e.toString());
     }
   }
 
-  Future<CustomReturn> setStoryToVote({required Story story, required String planningPokerId}) async {
+  Future<TebCustomReturn> setStoryToVote({required Story story, required String planningPokerId}) async {
     try {
       var query = await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
@@ -61,20 +61,20 @@ class StoryController with ChangeNotifier {
           .get();
 
       if (query.docs.isNotEmpty) {
-        return CustomReturn.error('Já existe uma história em votacão, finalize ela antes de iniciar uma nova');
+        return TebCustomReturn.error('Já existe uma história em votacão, finalize ela antes de iniciar uma nova');
       }
 
       story.status = StoryStatus.voting;
       return save(story: story, planningPokerId: planningPokerId);
     } catch (e) {
-      return CustomReturn.error(e.toString());
+      return TebCustomReturn.error(e.toString());
     }
   }
 
-  Future<CustomReturn> vote({required StoryVote storyVote, required User user, StoryVote? oldStoryVote}) async {
+  Future<TebCustomReturn> vote({required StoryVote storyVote, required User user, StoryVote? oldStoryVote}) async {
     try {
       if (storyVote.id.isEmpty) {
-        storyVote.id = UidGenerator.firestoreUid;
+        storyVote.id = TebUidGenerator.firestoreUid;
         storyVote.planningPokerId = user.planningPokerId;
         storyVote.userId = user.id;
         storyVote.userName = user.name;
@@ -101,9 +101,9 @@ class StoryController with ChangeNotifier {
           .set(storyVote.toMap());
 
       notifyListeners();
-      return CustomReturn.sucess;
+      return TebCustomReturn.sucess;
     } catch (e) {
-      return CustomReturn.error(e.toString());
+      return TebCustomReturn.error(e.toString());
     }
   }
 

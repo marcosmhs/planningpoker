@@ -2,11 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/components/messaging/custom_message.dart';
-import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
-import 'package:planningpoker/components/visual_elements/buttons_line.dart';
-import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
@@ -14,6 +9,11 @@ import 'package:planningpoker/features/user/visualizations/user.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
+import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
+import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/visual_elements/teb_buttons_line.dart';
+import 'package:teb_package/visual_elements/teb_text_form_field.dart';
 
 class StoryForm extends StatefulWidget {
   const StoryForm({super.key});
@@ -51,15 +51,15 @@ class _StoryFormState extends State<StoryForm> {
       // salva os dados
       _formKey.currentState?.save();
       StoryController storyController = Provider.of(context, listen: false);
-      CustomReturn retorno;
+      TebCustomReturn retorno;
       try {
         // remove a marcação de história em votação
         if (_story.status == StoryStatus.votingFinished) _story.status = StoryStatus.closed;
         retorno = await storyController.save(story: _story, planningPokerId: _planningData.id);
-        if (retorno.returnType == ReturnType.sucess) {
+        if (retorno.returnType == TebReturnType.sucess) {
           Navigator.of(context).pop();
         } else {
-          CustomMessage.error(context, message: retorno.message);
+          TebCustomMessage.error(context, message: retorno.message);
         }
       } finally {
         _savingData = false;
@@ -82,7 +82,7 @@ class _StoryFormState extends State<StoryForm> {
       _initializing = false;
     }
 
-    return CustomScaffold(
+    return TebCustomScaffold(
       title: Text(_user.creator
           ? _story.id.isEmpty
               ? 'Nova história'
@@ -104,7 +104,7 @@ class _StoryFormState extends State<StoryForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // name
-                    CustomTextEdit(
+                    TebTextEdit(
                       context: context,
                       controller: _nameController,
                       focusNode: _nameFocus,
@@ -121,7 +121,7 @@ class _StoryFormState extends State<StoryForm> {
                       },
                     ),
                     // Description
-                    CustomTextEdit(
+                    TebTextEdit(
                       context: context,
                       controller: _descriptionController,
                       focusNode: _descriptionFocus,
@@ -151,7 +151,7 @@ class _StoryFormState extends State<StoryForm> {
                     //),
                     // Points
                     if (_story.status != StoryStatus.created || _story.points != 0)
-                      CustomTextEdit(
+                      TebTextEdit(
                         context: context,
                         controller: _pointsController,
                         keyboardType: TextInputType.number,
@@ -163,11 +163,11 @@ class _StoryFormState extends State<StoryForm> {
                       ),
                     const SizedBox(height: 20),
                     // Butons
-                    ButtonsLine(
+                    TebButtonsLine(
                       buttons: [
-                        Button(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
+                        TebButton(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
                         if (_user.creator)
-                          Button(
+                          TebButton(
                             label: _story.status == StoryStatus.votingFinished ? 'Concluir história' : 'Salvar',
                             onPressed: _submit,
                           ),

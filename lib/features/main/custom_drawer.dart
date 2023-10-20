@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
+// ignore: depend_on_referenced_packages
 import 'package:package_info_plus/package_info_plus.dart';
 
 class CustomDrawer extends StatefulWidget {

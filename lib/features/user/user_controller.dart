@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/foundation.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
-import 'package:planningpoker/components/util/uid_generator.dart';
 import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_uid_generator.dart';
 
 class UserController with ChangeNotifier {
   final _planningDataCollectionName = 'planningData';
@@ -26,14 +26,14 @@ class UserController with ChangeNotifier {
   //  return dataList.docs.isNotEmpty;
   //}
 
-  Future<CustomReturn> save({required User user}) async {
+  Future<TebCustomReturn> save({required User user}) async {
     //if (await _userNameExists(user: user)) {
     //  return CustomReturn.error('Já existe uma pessoa com o nome ${user.name}');
     //}
 
     try {
       if (user.id.isEmpty) {
-        user.id = UidGenerator.firestoreUid;
+        user.id = TebUidGenerator.firestoreUid;
         user.createDate = DateTime.now();
       }
 
@@ -49,11 +49,11 @@ class UserController with ChangeNotifier {
       var hiveController = HiveController();
       hiveController.saveUser(user: _currentUser);
 
-      return CustomReturn.sucess;
+      return TebCustomReturn.sucess;
     } on fb_auth.FirebaseException catch (e) {
-      return CustomReturn.error(e.code);
+      return TebCustomReturn.error(e.code);
     } catch (e) {
-      return CustomReturn.error(e.toString());
+      return TebCustomReturn.error(e.toString());
     }
   }
 

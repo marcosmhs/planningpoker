@@ -2,13 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/components/messaging/custom_message.dart';
-import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
-import 'package:planningpoker/components/util/uid_generator.dart';
-import 'package:planningpoker/components/visual_elements/buttons_line.dart';
-import 'package:planningpoker/components/visual_elements/custom_checkbox.dart';
-import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
@@ -17,6 +10,13 @@ import 'package:planningpoker/features/user/user_controller.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
+import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
+import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_uid_generator.dart';
+import 'package:teb_package/visual_elements/teb_buttons_line.dart';
+import 'package:teb_package/visual_elements/teb_checkbox.dart';
+import 'package:teb_package/visual_elements/teb_text_form_field.dart';
 
 class PlanningDataForm extends StatefulWidget {
   const PlanningDataForm({super.key});
@@ -50,20 +50,20 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
       _formKey.currentState?.save();
       PlanningPokerController planningController = Provider.of(context, listen: false);
       UserController userController = Provider.of(context, listen: false);
-      CustomReturn retorno;
+      TebCustomReturn retorno;
       try {
         if (_planningData.id.isEmpty) {
-          _planningData.id = UidGenerator.firestoreUid;
+          _planningData.id = TebUidGenerator.firestoreUid;
         }
 
         retorno = await planningController.save(planningData: _planningData);
-        if (retorno.returnType == ReturnType.sucess) {
+        if (retorno.returnType == TebReturnType.sucess) {
           if (_newPlanning) {
             _user.creator = true;
             _user.planningPokerId = _planningData.id;
           }
           userController.save(user: _user);
-          CustomMessage.sucess(context, message: _newPlanning ? 'Partida criada!' : 'Partida alterada');
+          TebCustomMessage.sucess(context, message: _newPlanning ? 'Partida criada!' : 'Partida alterada');
           if (_newPlanning) {
             Navigator.of(context).popAndPushNamed(Routes.mainScreen, arguments: {
               'user': _user,
@@ -73,7 +73,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
             Navigator.of(context).pop();
           }
         } else {
-          CustomMessage.error(context, message: retorno.message);
+          TebCustomMessage.error(context, message: retorno.message);
         }
       } finally {
         _savingData = false;
@@ -137,7 +137,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
       _user = arguments['user'] ?? User();
 
       _newPlanning = _planningData.id.isEmpty;
-      _planningData.invitationCode = _newPlanning ? UidGenerator.invitationCode : _planningData.invitationCode;
+      _planningData.invitationCode = _newPlanning ? TebUidGenerator.invitationCode : _planningData.invitationCode;
       _nameController.text = _planningData.name;
       _invitationCodeController.text = _planningData.invitationCode;
 
@@ -149,7 +149,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
       _initializing = false;
     }
 
-    return CustomScaffold(
+    return TebCustomScaffold(
       title: Text(_newPlanning ? 'Nova partida' : 'Alterar partida'),
       body: SingleChildScrollView(
         child: Center(
@@ -167,7 +167,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // name
-                      CustomTextEdit(
+                      TebTextEdit(
                         context: context,
                         controller: _nameController,
                         labelText: 'Nome da partida',
@@ -182,7 +182,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                         },
                       ),
                       // Code
-                      CustomTextEdit(
+                      TebTextEdit(
                         context: context,
                         controller: _invitationCodeController,
                         labelText: 'Código de convite',
@@ -202,7 +202,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                         child: Text('Seu nome'),
                       ),
                       // user name
-                      CustomTextEdit(
+                      TebTextEdit(
                         context: context,
                         controller: _userNameController,
                         labelText: 'Seu nome',
@@ -217,7 +217,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
                         },
                       ),
 
-                      CustomCheckBox(
+                      TebCheckBox(
                         context: context,
                         value: _planningData.othersCanCreateStories,
                         title: 'Outros espectadores podem criar histórias',
@@ -229,10 +229,10 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
 
                       const SizedBox(height: 20),
                       // Butons
-                      ButtonsLine(
+                      TebButtonsLine(
                         buttons: [
-                          Button(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
-                          Button(label: 'Continuar', onPressed: _submit),
+                          TebButton(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
+                          TebButton(label: 'Continuar', onPressed: _submit),
                         ],
                       ),
                     ],

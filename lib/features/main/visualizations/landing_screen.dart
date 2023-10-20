@@ -3,13 +3,8 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:planningpoker/components/messaging/custom_dialog.dart';
-import 'package:planningpoker/components/messaging/custom_message.dart';
-import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
-import 'package:planningpoker/components/util/custom_return.dart';
-import 'package:planningpoker/components/util/util.dart';
-import 'package:planningpoker/components/visual_elements/custom_textFormField.dart';
 import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/main/visualizations/main_screen.dart';
@@ -18,6 +13,12 @@ import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:teb_package/messaging/teb_custom_dialog.dart';
+import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
+import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_util.dart';
+import 'package:teb_package/visual_elements/teb_text_form_field.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _LandingScreenState extends State<LandingScreen> {
   final _user = User();
   var _planningData = PlanningData();
 
-  var _info = Util.packageInfo;
+  var _info = TebUtil.packageInfo;
   var _initializing = true;
 
   Future<void> _setUserData({required BuildContext buildContext}) async {
@@ -49,7 +50,7 @@ class _LandingScreenState extends State<LandingScreen> {
               return Column(
                 children: [
                   // user name
-                  CustomTextEdit(
+                  TebTextEdit(
                     context: ctx,
                     labelText: 'Seu nome',
                     hintText: 'Informe seu nome',
@@ -117,12 +118,12 @@ class _LandingScreenState extends State<LandingScreen> {
               onPressed: () async {
                 var userController = Provider.of<UserController>(buildContext, listen: false);
                 if (_user.name.isEmpty) {
-                  CustomMessage.error(context, message: 'Informe seu nome');
+                  TebCustomMessage.error(context, message: 'Informe seu nome');
                 } else {
                   _user.planningPokerId = _planningData.id;
                   if (_user.isSpectator) _user.creator = _planningData.othersCanCreateStories;
                   var customReturn = await userController.save(user: _user);
-                  if (customReturn.returnType == ReturnType.error) {
+                  if (customReturn.returnType == TebReturnType.error) {
                     if (!kIsWeb) {
                       FocusScopeNode currentFocus = FocusScope.of(ctx);
                       if (!currentFocus.hasPrimaryFocus) {
@@ -130,12 +131,12 @@ class _LandingScreenState extends State<LandingScreen> {
                       }
                     }
 
-                    CustomMessage(
+                    TebCustomMessage(
                       context: context,
                       messageText: customReturn.message,
-                      messageType: MessageType.error,
+                      messageType: TebMessageType.error,
                       durationInSeconds: 3,
-                      modelType: ModelType.toast,
+                      modelType: TebModelType.toast,
                       toastGravity: ToastGravity.TOP,
                     );
                   } else {
@@ -156,15 +157,15 @@ class _LandingScreenState extends State<LandingScreen> {
 
   void _findPlanning({required BuildContext context, required String invitationCode}) async {
     if (invitationCode.isEmpty) {
-      CustomMessage.error(context, message: 'Ops, você não informou o código do convite');
+      TebCustomMessage.error(context, message: 'Ops, você não informou o código do convite');
       return;
     }
 
     var customReturn = await Provider.of<PlanningPokerController>(context, listen: false).setPlanningDataByInvitation(
       invitationCode: invitationCode,
     );
-    if (customReturn.returnType == ReturnType.error) {
-      CustomMessage.error(context, message: customReturn.message);
+    if (customReturn.returnType == TebReturnType.error) {
+      TebCustomMessage.error(context, message: customReturn.message);
       return;
     }
     _planningData = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning;
@@ -173,7 +174,7 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _newPlanning() {
-    return CustomScaffold(
+    return TebCustomScaffold(
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -191,7 +192,7 @@ class _LandingScreenState extends State<LandingScreen> {
       appBarActions: [
         IconButton(
             onPressed: () {
-              CustomDialog(context: context).informationDialog(
+              TebCustomDialog(context: context).informationDialog(
                   message:
                       'Desenvolvido por um programador entediado durante suas férias.\n\nImportante:\n1 - Evite colocar dados sensíveis nas descrições dos cards.\n2 - Plannings com mais de 5 dias serão excluídas\n\n Divirta-se');
             },
@@ -230,7 +231,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       Text('Entrar em um jogo já criado', style: Theme.of(context).textTheme.headlineSmall),
                       ConstrainedBox(
                         constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
-                        child: CustomTextEdit(
+                        child: TebTextEdit(
                           context: context,
                           labelText: 'Código do jogo',
                           controller: _invitationCodeController,
@@ -258,7 +259,7 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _errorScreen({required String errorMessage}) {
-    return CustomScaffold(
+    return TebCustomScaffold(
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -280,7 +281,7 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     if (_initializing) {
-      Util.version.then((info) => setState(() => _info = info));
+      TebUtil.version.then((info) => setState(() => _info = info));
       _initializing = false;
     }
 

@@ -3,9 +3,6 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:planningpoker/components/messaging/custom_dialog.dart';
-import 'package:planningpoker/components/messaging/custom_message.dart';
-import 'package:planningpoker/components/screen_elements/custom_scaffold.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
@@ -17,6 +14,9 @@ import 'package:planningpoker/features/story/visualizations/vote_card_widget.dar
 import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:teb_package/messaging/teb_custom_dialog.dart';
+import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
 // ignore: must_be_immutable
 class MainScreen extends StatefulWidget {
@@ -124,10 +124,10 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           onTap: () {
             Clipboard.setData(
               ClipboardData(text: _planningData.invitationCode),
-            ).then((value) => CustomMessage(
+            ).then((value) => TebCustomMessage(
                 context: context,
                 messageText: 'Código da partida copiado para a área de transferência',
-                messageType: MessageType.info));
+                messageType: TebMessageType.info));
           },
           child: const Icon(Icons.copy, size: 15),
         ),
@@ -153,7 +153,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
       stream: Provider.of<PlanningPokerController>(context, listen: false).getPlanningData(planningId: _planningData.id),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const CustomScaffold(
+          return const TebCustomScaffold(
               body: Center(
             child: Text('Parece que houve um erro, pois não há dados da planning e você está nesta tela'),
           ));
@@ -161,14 +161,14 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
 
         if (snapshot.hasData) _planningData = PlanningData.fromDocument(snapshot.data!);
 
-        return CustomScaffold(
+        return TebCustomScaffold(
           // appbar
           appBar: AppBar(
             title: _screenTitle(context),
             actions: [
               IconButton(
                   onPressed: () {
-                    CustomDialog(context: context)
+                    TebCustomDialog(context: context)
                         .confirmationDialog(
                       message:
                           'Tem certeza que deseja abandona a partida?\n\nIsso fará com que seu acesso seja removido permanentemente.',
