@@ -893,9 +893,11 @@ packages:
   teb_package:
     dependency: "direct main"
     description:
-      path: "../teb_package"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "001957bc41a2010739019991fda6046f20aefae6"
+      url: "https://github.com/marcosmhs/teb_package.git"
+    source: git
     version: "0.0.1"
   term_glyph:
     dependency: transitive
