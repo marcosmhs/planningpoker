@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
   var _info = TebUtil.packageInfo;
   var _initializing = true;
+  var analytics = FirebaseAnalytics.instance;
 
   Future<void> _setUserData({required BuildContext buildContext}) async {
     await showDialog(
@@ -171,6 +173,7 @@ class _LandingScreenState extends State<LandingScreen> {
       return;
     }
     _planningData = Provider.of<PlanningPokerController>(context, listen: false).currentPlanning;
+    analytics.logEvent(name: 'finding_created_planning');
 
     await _setUserData(buildContext: context);
   }
@@ -220,7 +223,10 @@ class _LandingScreenState extends State<LandingScreen> {
                   child: ConstrainedBox(
                     constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).popAndPushNamed(Routes.planningDataForm),
+                      onPressed: () {
+                        analytics.logEvent(name: 'create_new_planning');
+                        Navigator.of(context).popAndPushNamed(Routes.planningDataForm);
+                      },
                       child: const Text('Criar um novo jogo'),
                     ),
                   ),
@@ -284,10 +290,8 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     if (_initializing) {
       TebUtil.version.then((info) => setState(() => _info = info));
+      analytics.logEvent(name: 'landing_entering');
       _initializing = false;
-      DeviceLogController(fireStoreInstance: FirebaseFirestore.instance).registerAccess(
-        screenResolution: MediaQuery.of(context).size,
-      );
     }
 
     var hiveController = HiveController();
@@ -303,6 +307,7 @@ class _LandingScreenState extends State<LandingScreen> {
           if (snapshot.error != null) {
             hiveController.clearPlanningDataHiveBox();
             hiveController.clearUserHiveBox();
+            analytics.logEvent(name: 'landing_error');
             return _errorScreen(errorMessage: snapshot.error.toString());
             // ao final do processo
           } else {
