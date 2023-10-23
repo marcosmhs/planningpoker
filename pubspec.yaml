@@ -2,7 +2,7 @@ name: planningpoker
 description: A planning poker app.
 publish_to: 'none'
 
-version: 0.2.0+51
+version: 0.2.1+55
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -17,7 +17,7 @@ dependencies:
     git:
       url: https://github.com/marcosmhs/teb_package.git
       ref: main
-    #path: ../teb_package      
+    #path: ../teb_package
   
   build_runner: ^2.4.6
   json_theme: ^4.0.0

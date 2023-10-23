@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/visualizations/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:teb_package/access_log/access_log_controller.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
@@ -283,6 +285,9 @@ class _LandingScreenState extends State<LandingScreen> {
     if (_initializing) {
       TebUtil.version.then((info) => setState(() => _info = info));
       _initializing = false;
+      DeviceLogController(fireStoreInstance: FirebaseFirestore.instance).registerAccess(
+        screenResolution: MediaQuery.of(context).size,
+      );
     }
 
     var hiveController = HiveController();
