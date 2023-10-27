@@ -176,90 +176,90 @@ class _WellComeScreenState extends State<WellComeScreen> {
       _initializing = false;
     }
     return TebCustomScaffold(
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text('Planning Poker'),
-            const SizedBox(width: 10),
-            Text(
-              'v${_info.version}-${_info.buildNumber}',
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-                color: Theme.of(context).colorScheme.background,
-              ),
-            )
-          ],
-        ),
-        appBarActions: [
-          IconButton(
-              onPressed: () {
-                TebCustomDialog(context: context).informationDialog(
-                    message:
-                        'Desenvolvido por um programador entediado durante suas férias.\n\nImportante:\n1 - Evite colocar dados sensíveis nas descrições dos cards.\n2 - Plannings com mais de 5 dias serão excluídas\n\n Divirta-se');
-              },
-              icon: const Icon(Icons.question_mark))
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const Text('Planning Poker'),
+          const SizedBox(width: 10),
+          Text(
+            'v${_info.version}-${_info.buildNumber}',
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
+              color: Theme.of(context).colorScheme.background,
+            ),
+          )
         ],
-        body: Center(
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: kIsWeb
-                  ? MediaQuery.of(context).size.width <= 750
-                      ? MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width * (MediaQuery.of(context).size.width <= 1000 ? 0.6 : 0.4)
-                  : MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('O que deseja fazer?', style: Theme.of(context).textTheme.headlineLarge),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          analytics.logEvent(name: 'create_new_planning');
-                          Navigator.of(context).popAndPushNamed(Routes.planningDataForm);
-                        },
-                        child: const Text('Criar um novo jogo'),
-                      ),
+      ),
+      //appBarActions: [
+      //  IconButton(
+      //      onPressed: () {
+      //        TebCustomDialog(context: context).informationDialog(
+      //            message:
+      //                'Desenvolvido por um programador entediado durante suas férias.\n\nImportante:\n1 - Evite colocar dados sensíveis nas descrições dos cards.\n2 - Plannings com mais de 5 dias serão excluídas\n\n Divirta-se');
+      //      },
+      //      icon: const Icon(Icons.question_mark))
+      //],
+      body: Center(
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: kIsWeb
+                ? MediaQuery.of(context).size.width <= 750
+                    ? MediaQuery.of(context).size.width
+                    : MediaQuery.of(context).size.width * (MediaQuery.of(context).size.width <= 1000 ? 0.6 : 0.4)
+                : MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('O que deseja fazer?', style: Theme.of(context).textTheme.headlineLarge),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        analytics.logEvent(name: 'create_new_planning');
+                        Navigator.of(context).popAndPushNamed(Routes.planningDataForm);
+                      },
+                      child: const Text('Criar um novo jogo'),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text('Entrar em um jogo já criado', style: Theme.of(context).textTheme.headlineSmall),
-                        ConstrainedBox(
-                          constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
-                          child: TebTextEdit(
-                            context: context,
-                            labelText: 'Código do jogo',
-                            controller: _invitationCodeController,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text('Entrar em um jogo já criado', style: Theme.of(context).textTheme.headlineSmall),
+                      ConstrainedBox(
+                        constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
+                        child: TebTextEdit(
+                          context: context,
+                          labelText: 'Código do jogo',
+                          controller: _invitationCodeController,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
+                          child: ElevatedButton(
+                            onPressed: () => _findPlanning(context: context, invitationCode: _invitationCodeController.text),
+                            child: const Text('Entrar'),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
-                            child: ElevatedButton(
-                              onPressed: () => _findPlanning(context: context, invitationCode: _invitationCodeController.text),
-                              child: const Text('Entrar'),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-        bottomNavigationBar: const BottonInfo(),
-      );
+      ),
+      bottomNavigationBar: const BottonInfo(),
+    );
   }
 }

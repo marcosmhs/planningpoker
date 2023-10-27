@@ -10,6 +10,7 @@ import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_url_manager.dart';
 
 class StoryCard extends StatefulWidget {
   final Size size;
@@ -277,9 +278,7 @@ class _StoryCardState extends State<StoryCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        _showStoryOptions(context: context, story: widget.story);
-      },
+      onTap: () async => _showStoryOptions(context: context, story: widget.story),
       child: Padding(
         padding: const EdgeInsets.all(1.0),
         child: Card(
@@ -311,9 +310,25 @@ class _StoryCardState extends State<StoryCard> {
                   ),
                 ),
                 const Spacer(),
+                if (widget.story.url.isNotEmpty)
+                  // url
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        TebUrlManager.launchUrl(url: widget.story.url).then((value) {
+                          if (!value) TebCustomMessage.error(context, message: 'Erro ao abrir o link');
+                        });
+                      },
+                      child: Text(
+                        'Mais detalhes',
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ),
                 // Status
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Text(
                     widget.story.status == StoryStatus.closed
                         ? '${widget.story.statusLabel} - ${widget.story.points} pontos'
@@ -321,28 +336,6 @@ class _StoryCardState extends State<StoryCard> {
                     style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
-
-                //// url
-                //Padding(
-                //  padding: const EdgeInsets.all(8.0),
-                //  child: GestureDetector(
-                //    onTap: () async {
-                //      try {
-                //        if (!await launchUrl(Uri.parse(story.url))) {
-                //          // ignore: use_build_context_synchronously
-                //          CustomMessage.error(context, message: 'Não foi possível abrir o link: ${story.url}');
-                //        }
-                //      } catch (e) {
-                //        // ignore: use_build_context_synchronously
-                //        CustomMessage.error(context, message: e.toString());
-                //      }
-                //    },
-                //    child: Text(
-                //      'Mais detalhes',
-                //      style: TextStyle(color: Theme.of(context).primaryColor),
-                //    ),
-                //  ),
-                //),
               ],
             ),
           ),

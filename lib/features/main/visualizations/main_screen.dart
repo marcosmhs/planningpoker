@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:planningpoker/consts.dart';
 import 'package:planningpoker/features/main/routes.dart';
+import 'package:planningpoker/features/main/visualizations/about_dialog_button.dart';
 import 'package:planningpoker/features/main/visualizations/botton_info.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
@@ -173,13 +176,13 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
           appBar: AppBar(
             title: _screenTitle(context),
             actions: [
+              const AboutDialogButton(),
               IconButton(
                 onPressed: () => _confirmPlanningExit(),
                 icon: const Icon(Icons.exit_to_app),
               )
             ],
           ),
-          bottomNavigationBar: const BottonInfo(),
           body: StreamBuilder<QuerySnapshot>(
             stream: Provider.of<StoryController>(context, listen: false).getStories(planningPokerId: _planningData.id),
             builder: (context, snapshot) {

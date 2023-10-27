@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/features/main/visualizations/botton_info.dart';
+import 'package:planningpoker/features/main/visualizations/about_dialog_button.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
@@ -13,7 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 import 'package:teb_package/util/teb_return.dart';
+import 'package:teb_package/util/teb_url_manager.dart';
 import 'package:teb_package/visual_elements/teb_buttons_line.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 import 'package:teb_package/visual_elements/teb_text_form_field.dart';
 
 class StoryForm extends StatefulWidget {
@@ -40,6 +42,7 @@ class _StoryFormState extends State<StoryForm> {
 
   final _formKey = GlobalKey<FormState>();
   bool _savingData = false;
+  var _storyUrlLink = '';
 
   void _submit() async {
     if (_savingData) return;
@@ -80,6 +83,7 @@ class _StoryFormState extends State<StoryForm> {
       _urlController.text = _story.url;
       _descriptionController.text = _story.description;
       _pointsController.text = _story.points.toString();
+      _storyUrlLink = _story.url;
       _initializing = false;
     }
 
@@ -89,7 +93,9 @@ class _StoryFormState extends State<StoryForm> {
               ? 'Nova história'
               : 'Alterar história'
           : 'Detalhes da história'),
-      bottomNavigationBar: const BottonInfo(),
+      appBarActions: const [
+        AboutDialogButton(),
+      ],
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
@@ -111,8 +117,8 @@ class _StoryFormState extends State<StoryForm> {
                       controller: _nameController,
                       focusNode: _nameFocus,
                       nextFocusNode: _descriptionFocus,
-                      labelText: 'Nome da história',
-                      hintText: 'Nome da história',
+                      labelText: 'Nome/número da história',
+                      hintText: 'Nome/número da história',
                       onSave: (value) => _story.name = value ?? '',
                       prefixIcon: Icons.arrow_forward,
                       textInputAction: TextInputAction.next,
@@ -121,6 +127,11 @@ class _StoryFormState extends State<StoryForm> {
                         if (finalValue.trim().isEmpty) return 'O nome deve ser informado';
                         return null;
                       },
+                    ),
+                    const TebText(
+                      text: 'Se você utiliza o Jira, informe aqui o código do card',
+                      fontStyle: FontStyle.italic,
+                      padding: EdgeInsets.only(bottom: 5),
                     ),
                     // Description
                     TebTextEdit(
@@ -140,17 +151,33 @@ class _StoryFormState extends State<StoryForm> {
                         return null;
                       },
                     ),
-                    //// url
-                    //CustomTextEdit(
-                    //  context: context,
-                    //  controller: _urlController,
-                    //  focusNode: _urlFocus,
-                    //  labelText: 'Link',
-                    //  hintText: 'Link para a história',
-                    //  onSave: (value) => story.url = value ?? '',
-                    //  prefixIcon: Icons.link,
-                    //  textInputAction: TextInputAction.next,
-                    //),
+                    // url
+                    TebTextEdit(
+                      context: context,
+                      controller: _urlController,
+                      focusNode: _urlFocus,
+                      labelText: 'Link',
+                      hintText: 'Link para a história',
+                      onSave: (value) => _story.url = value ?? '',
+                      onChanged: (value) => setState(() => _storyUrlLink = value!),
+                      prefixIcon: Icons.link,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    // URL Example
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          TebUrlManager.launchUrl(url: _storyUrlLink).then((value) {
+                            if (!value) TebCustomMessage.error(context, message: 'Erro ao abrir o link');
+                          });
+                        },
+                        child: Text(
+                          _storyUrlLink,
+                          style: TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                    ),
                     // Points
                     if (_story.status != StoryStatus.created || _story.points != 0)
                       TebTextEdit(
