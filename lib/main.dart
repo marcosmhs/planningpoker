@@ -10,7 +10,7 @@ import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/planning_poker/planning_data_form.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/story/visualizations/story_form.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:provider/provider.dart';
 

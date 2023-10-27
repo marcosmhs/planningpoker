@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/foundation.dart';
 import 'package:planningpoker/features/main/hive_controller.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_uid_generator.dart';
 

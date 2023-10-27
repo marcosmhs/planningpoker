@@ -4,7 +4,7 @@ import 'package:planningpoker/consts.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
 
 class VoteCard extends StatefulWidget {

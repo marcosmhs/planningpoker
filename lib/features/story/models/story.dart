@@ -26,6 +26,16 @@ class Story {
     return Story.fromMap(data);
   }
 
+  void clear() {
+    id = '';
+    planningPokerId = '';
+    name = '';
+    url = '';
+    description = '';
+    points = 0;
+    status = StoryStatus.created;
+  }
+
   static Story fromMap(Map<String, dynamic> map) {
     var u = Story();
 
@@ -41,7 +51,7 @@ class Story {
     return u;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> get toMap {
     Map<String, dynamic> r = {};
     r = {
       'id': id,

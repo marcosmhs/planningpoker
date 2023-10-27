@@ -3,9 +3,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
+import 'package:planningpoker/features/main/visualizations/botton_info.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 
 // ignore: depend_on_referenced_packages
@@ -151,6 +152,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
 
     return TebCustomScaffold(
       title: Text(_newPlanning ? 'Nova partida' : 'Alterar partida'),
+      bottomNavigationBar: const BottonInfo(),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(

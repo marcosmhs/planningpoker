@@ -6,7 +6,7 @@ import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/util/teb_return.dart';
@@ -17,6 +17,7 @@ class StoryCard extends StatefulWidget {
   final Story story;
   final Story votingStory;
   final User user;
+  final void Function() clearVotingStory;
   const StoryCard({
     super.key,
     required this.user,
@@ -24,13 +25,18 @@ class StoryCard extends StatefulWidget {
     required this.story,
     required this.votingStory,
     required this.size,
+    required this.clearVotingStory,
   });
 
   @override
   State<StoryCard> createState() => _StoryCardState();
 
-  static Widget newCard(
-      {required BuildContext context, required Size size, required PlanningData planningData, required User user}) {
+  static Widget newCard({
+    required BuildContext context,
+    required Size size,
+    required PlanningData planningData,
+    required User user,
+  }) {
     return Card(
       child: SizedBox(
         height: size.height,
@@ -53,6 +59,12 @@ class StoryCard extends StatefulWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ObjectFlagProperty<void Function()>.has('clearVotingStory', clearVotingStory));
   }
 }
 
@@ -107,6 +119,8 @@ class _StoryCardState extends State<StoryCard> {
                     if (customReturn.returnType == TebReturnType.error) {
                       TebCustomMessage.error(context, message: customReturn.message);
                     } else {
+                      widget.votingStory.clear();
+                      widget.clearVotingStory();
                       Navigator.of(dialogContext, rootNavigator: true).pop();
                     }
                   });
@@ -124,8 +138,12 @@ class _StoryCardState extends State<StoryCard> {
               }
             }
           },
-          label: const Text('Iniciar Votação'),
-          icon: const Icon(Icons.send_to_mobile_rounded),
+          label: Text(
+            widget.votingStory.id.isNotEmpty && widget.votingStory.id == story.id ? 'Cancelar Votação' : 'Iniciar Votação',
+          ),
+          icon: Icon(widget.votingStory.id.isNotEmpty && widget.votingStory.id == story.id
+              ? Icons.cancel_outlined
+              : Icons.send_to_mobile_rounded),
         ),
       ),
     );
@@ -152,6 +170,8 @@ class _StoryCardState extends State<StoryCard> {
                       if (customReturn.returnType == TebReturnType.error) {
                         TebCustomMessage.error(context, message: customReturn.message);
                       } else {
+                        widget.votingStory.clear();
+                        widget.clearVotingStory();
                         Navigator.of(dialogContext).pop();
                       }
                     });
@@ -165,6 +185,9 @@ class _StoryCardState extends State<StoryCard> {
               );
               if (customReturn.returnType == TebReturnType.error) {
                 TebCustomMessage.error(context, message: customReturn.message);
+              } else {
+                widget.votingStory.clear();
+                widget.clearVotingStory();
               }
             }
           },
@@ -224,7 +247,8 @@ class _StoryCardState extends State<StoryCard> {
           insetPadding: kIsWeb
               ? MediaQuery.of(context).size.width <= 500
                   ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width <= 1000 ? 0 : 300)
+                  : EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width <= 1000 ? 0 : MediaQuery.of(context).size.width * 0.3)
               : EdgeInsets.zero,
           scrollable: true,
           title: const Text('O que deseja fazer?'),
@@ -272,7 +296,7 @@ class _StoryCardState extends State<StoryCard> {
                 Padding(
                   padding: const EdgeInsets.only(left: 5, top: 10, bottom: 5),
                   child: Text(
-                    widget.story.name,
+                    widget.story.name.length > 20 ? '${widget.story.name.substring(1, 20)}...' : widget.story.name,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),

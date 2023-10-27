@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 
 class HiveController with ChangeNotifier {
   final _userHiveBoxName = 'user';
@@ -37,20 +37,31 @@ class HiveController with ChangeNotifier {
       _user = _userHiveBox.get(_userHiveBox.keyAt(0));
     }
 
-    await _preparePlanningDataHiveBox();
-    if (_planningDataHiveBox.isNotEmpty) {
-      _planningData = _planningDataHiveBox.get(_planningDataHiveBox.keyAt(0));
-    }
-
-    var planningPokerController = PlanningPokerController();
-
-    if (_planningData.id.isEmpty) return;
-
-    var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
-
-    if (!planningExists) {
+    //se a data de criação do usuário + 5 dias é menor que a data atual significa que ele foi
+    //criado a mais de 5 dias, ou seja,  ele não deve mais existir
+    if (_user.createDate != null && _user.createDate!.add(const Duration(days: 5)).isBefore(DateTime.now())) {
+      clearUserHiveBox();
+      clearPlanningDataHiveBox();
       _planningData = PlanningData();
       _user = User();
+    } else {
+      await _preparePlanningDataHiveBox();
+      if (_planningDataHiveBox.isNotEmpty) {
+        _planningData = _planningDataHiveBox.get(_planningDataHiveBox.keyAt(0));
+      }
+
+      var planningPokerController = PlanningPokerController();
+
+      if (_planningData.id.isEmpty) return;
+
+      var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
+
+      if (!planningExists) {
+        clearUserHiveBox();
+        clearPlanningDataHiveBox();
+        _planningData = PlanningData();
+        _user = User();
+      }
     }
   }
 

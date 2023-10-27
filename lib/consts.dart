@@ -1,4 +1,7 @@
 class Consts {
+  static double storyCardHeight = 130;
+  static double storyCardWidth = 140;
+
   static List<Map<int, String>> pokerCardsValues = [
     {0: 'Um café'},
     {1: 'Um'},

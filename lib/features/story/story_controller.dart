@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_uid_generator.dart';
 
@@ -26,7 +26,7 @@ class StoryController with ChangeNotifier {
           .doc(planningPokerId)
           .collection(_storyCollectionName)
           .doc(story.id)
-          .set(story.toMap());
+          .set(story.toMap);
 
       notifyListeners();
       return TebCustomReturn.sucess;

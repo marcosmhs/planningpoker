@@ -2,10 +2,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:planningpoker/features/main/visualizations/botton_info.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
-import 'package:planningpoker/features/user/visualizations/user.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
@@ -88,6 +89,7 @@ class _StoryFormState extends State<StoryForm> {
               ? 'Nova história'
               : 'Alterar história'
           : 'Detalhes da história'),
+      bottomNavigationBar: const BottonInfo(),
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
