@@ -23,18 +23,20 @@ class WellComeScreen extends StatefulWidget {
 class _WellComeScreenState extends State<WellComeScreen> {
   var _info = TebUtil.packageInfo;
   final TextEditingController _invitationCodeController = TextEditingController();
-  final _user = User();
+  final TextEditingController _userAccessCodeController = TextEditingController();
+  var _user = User();
   var _planningData = PlanningData();
   var _initializing = true;
   var analytics = FirebaseAnalytics.instance;
 
-  void _findPlanning({required BuildContext context, required String invitationCode}) async {
+  void _findPlanning({required BuildContext context, required String invitationCode, String userAccessCode = ''}) async {
     if (invitationCode.isEmpty) {
       TebCustomMessage.error(context, message: 'Ops, você não informou o código do convite');
       return;
     }
 
     var planningPokerController = PlanningPokerController();
+
     var customReturn = await planningPokerController.setPlanningDataByInvitation(
       invitationCode: invitationCode,
     );
@@ -42,10 +44,29 @@ class _WellComeScreenState extends State<WellComeScreen> {
       TebCustomMessage.error(context, message: customReturn.message);
       return;
     }
+
     _planningData = planningPokerController.currentPlanning;
     analytics.logEvent(name: 'finding_created_planning');
 
-    await _setUserData(buildContext: context);
+    if (userAccessCode.isEmpty) {
+      await _setUserData(buildContext: context);
+    } else {
+      
+      var user = await UserController().getUserByAccessCode(
+        planningId: _planningData.id,
+        userAccessCode: userAccessCode,
+      );
+      
+      if (user.id.isEmpty) {
+        TebCustomMessage.error(context, message: 'Código de acesso não encontrado');
+        return;
+      }
+
+      Navigator.of(context).popAndPushNamed(Routes.mainScreen, arguments: {
+        'user': user,
+        'planningData': _planningData,
+      });
+    }
   }
 
   Future<void> _setUserData({required BuildContext buildContext}) async {
@@ -71,6 +92,15 @@ class _WellComeScreenState extends State<WellComeScreen> {
                     prefixIcon: Icons.person,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) => _user.name = value ?? '',
+                  ),
+                  TebTextEdit(
+                    context: ctx,
+                    labelText: 'Código de acesso',
+                    hintText: 'Informe seu código de acesso',
+                    onSave: (value) => _user.accessCode = value ?? '',
+                    prefixIcon: Icons.lock_person,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) => _user.accessCode = value ?? '',
                   ),
                   // role selection
                   Column(
@@ -241,12 +271,24 @@ class _WellComeScreenState extends State<WellComeScreen> {
                           controller: _invitationCodeController,
                         ),
                       ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
+                        child: TebTextEdit(
+                          context: context,
+                          labelText: 'Se já tiver um código de acesso informe-o abaixo',
+                          controller: _userAccessCodeController,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: ConstrainedBox(
                           constraints: BoxConstraints.tightFor(height: 50, width: MediaQuery.of(context).size.width * 0.75),
                           child: ElevatedButton(
-                            onPressed: () => _findPlanning(context: context, invitationCode: _invitationCodeController.text),
+                            onPressed: () => _findPlanning(
+                              context: context,
+                              invitationCode: _invitationCodeController.text,
+                              userAccessCode: _userAccessCodeController.text,
+                            ),
                             child: const Text('Entrar'),
                           ),
                         ),

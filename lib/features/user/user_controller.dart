@@ -57,6 +57,34 @@ class UserController with ChangeNotifier {
     }
   }
 
+  Future<User> getUserByAccessCode({required String planningId, required String userAccessCode}) async {
+    final userDataRef = await FirebaseFirestore.instance
+        .collection(_planningDataCollectionName)
+        .doc(planningId)
+        .collection(_userCollectionName)
+        .where('accessCode', isEqualTo: userAccessCode)
+        .get();
+
+    if (userDataRef.size == 0) {
+      return User();
+    }
+
+    final userData = userDataRef.docs.first.data();
+    var user = User.fromMap(userData);
+    var hiveController = HiveController();
+    hiveController.saveUser(user: user);
+
+    return user;
+  }
+
+  Stream<QuerySnapshot<Object?>> getUserListData({required String planningId}) {
+    return FirebaseFirestore.instance
+        .collection(_planningDataCollectionName)
+        .doc(planningId)
+        .collection(_userCollectionName)
+        .snapshots();
+  }
+
   void clearCurrentUser() async {
     var hiveController = HiveController();
     hiveController.clearUserHiveBox();

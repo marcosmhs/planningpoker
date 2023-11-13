@@ -129,8 +129,8 @@ class _StoryFormState extends State<StoryForm> {
                       },
                     ),
                     const TebText(
-                      text: 'Se você utiliza o Jira, informe aqui o código do card',
-                      fontStyle: FontStyle.italic,
+                      'Se você utiliza o Jira, informe aqui o código do card',
+                      textStyle: FontStyle.italic,
                       padding: EdgeInsets.only(bottom: 5),
                     ),
                     // Description

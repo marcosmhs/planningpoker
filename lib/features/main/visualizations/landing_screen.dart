@@ -62,7 +62,7 @@ class _LandingScreenState extends State<LandingScreen> {
             hiveController.clearPlanningDataHiveBox();
             hiveController.clearUserHiveBox();
             analytics.logEvent(name: 'landing_error');
-            return _errorScreen(errorMessage: snapshot.error.toString());
+            return _errorScreen(errorMessage:  snapshot.error.toString());
             // ao final do processo
           } else {
             // irá avaliar se o usuário possui login ou não

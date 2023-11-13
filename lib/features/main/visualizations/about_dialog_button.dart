@@ -29,7 +29,7 @@ class _AboutDialogButtonState extends State<AboutDialogButton> {
                       horizontal: MediaQuery.of(context).size.width <= 1000 ? 0 : MediaQuery.of(context).size.width * 0.3)
               : EdgeInsets.zero,
           scrollable: true,
-          title: const TebText(text: 'Sobre', textSize: 30),
+          title: const TebText('Sobre', textSize: 30),
           titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
           content: StatefulBuilder(
             builder: (BuildContext ctx2, StateSetter setState) {
@@ -37,19 +37,19 @@ class _AboutDialogButtonState extends State<AboutDialogButton> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TebText(
-                    text: 'Planning Poker v${info.version}.${info.buildNumber}',
+                    'Planning Poker v${info.version}.${info.buildNumber}',
                     textSize: 25,
                     padding: const EdgeInsets.only(bottom: 20),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const TebText(text: 'Desenvolvido por ', textSize: 18),
+                      const TebText('Desenvolvido por ', textSize: 18),
                       InkWell(
                         onTap: () => TebUrlManager.launchUrl(url: 'https://www.marcosmhs.com.br'),
                         child: TebText(
-                          text: 'Marcos H. Silva',
-                          color: Theme.of(context).primaryColor,
+                          'Marcos H. Silva',
+                          textColor: Theme.of(context).primaryColor,
                           textSize: 15,
                         ),
                       ),
@@ -58,12 +58,12 @@ class _AboutDialogButtonState extends State<AboutDialogButton> {
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () => TebUrlManager.launchUrl(url: 'mailto:marcosmhs@live.com'),
-                    child: TebText(text: 'marcosmhs@live.com', color: Theme.of(context).primaryColor),
+                    child: TebText('marcosmhs@live.com', textColor: Theme.of(context).primaryColor),
                   ),
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () => TebUrlManager.launchUrl(url: 'https://github.com/marcosmhs/'),
-                    child: TebText(text: 'https://github.com/marcosmhs/', color: Theme.of(context).primaryColor),
+                    child: TebText('https://github.com/marcosmhs/', textColor: Theme.of(context).primaryColor),
                   ),
                   const SizedBox(height: 20),
                   Row(

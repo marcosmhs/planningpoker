@@ -37,7 +37,6 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
   bool _savingData = false;
   bool _newPlanning = false;
 
-  //List<bool> _selectedRole = [true, false];
 
   void _submit() async {
     if (_savingData) return;
@@ -82,54 +81,6 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
     }
   }
 
-  //Widget _roleSelection(BuildContext context) {
-  //  return Container(
-  //    padding: const EdgeInsets.all(8),
-  //    child: Row(
-  //      children: [
-  //        const Text('Qual o seu papel?'),
-  //        const Spacer(),
-  //        Center(
-  //          child: ConstrainedBox(
-  //            constraints: const BoxConstraints.tightFor(height: 40),
-  //            child: ToggleButtons(
-  //              isSelected: _selectedRole,
-  //              fillColor: Theme.of(context).primaryColor,
-  //              selectedColor: Colors.black,
-  //              onPressed: (index) {
-  //                setState(() {
-  //                  _user.role = index == 0 ? Role.player : Role.spectator;
-  //                  _selectedRole = [index == 0, index == 1];
-  //                });
-  //              },
-  //              children: [
-  //                SizedBox(
-  //                    width: MediaQuery.of(context).size.width * 0.3,
-  //                    child: Text(
-  //                      'Jogador',
-  //                      textAlign: TextAlign.center,
-  //                      style: _user.role == Role.player
-  //                          ? TextStyle(color: Theme.of(context).cardColor)
-  //                          : TextStyle(color: Theme.of(context).primaryColor),
-  //                    )),
-  //                SizedBox(
-  //                    width: MediaQuery.of(context).size.width * 0.3,
-  //                    child: Text(
-  //                      'Espectador',
-  //                      textAlign: TextAlign.center,
-  //                      style: _user.role == Role.spectator
-  //                          ? TextStyle(color: Theme.of(context).cardColor)
-  //                          : TextStyle(color: Theme.of(context).primaryColor),
-  //                    )),
-  //              ],
-  //            ),
-  //          ),
-  //        ),
-  //      ],
-  //    ),
-  //  );
-  //}
-
   @override
   Widget build(BuildContext context) {
     if (_initializing) {
@@ -144,7 +95,6 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
 
       if (_user.id.isNotEmpty) {
         _userNameController.text = _user.name;
-        //_selectedRole = [_user.role == Role.player, _user.role == Role.spectator];
       }
 
       _initializing = false;

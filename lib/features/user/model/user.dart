@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
+import 'package:teb_package/util/teb_uid_generator.dart';
 
 part 'user.g.dart';
 
@@ -25,6 +26,8 @@ class User {
   late Role role;
   @HiveField(5)
   late DateTime? createDate;
+  @HiveField(6)
+  late String accessCode;
 
   User({
     this.id = '',
@@ -33,7 +36,10 @@ class User {
     this.creator = false,
     this.role = Role.player,
     this.createDate,
-  });
+    String? accessCode,
+  }) {
+    this.accessCode = accessCode ?? TebUidGenerator.userAccessCode;
+  }
 
   factory User.fromDocument(DocumentSnapshot doc) {
     final data = doc.data()! as Map<String, dynamic>;
@@ -50,6 +56,7 @@ class User {
       role: roleFromString(map['role']),
       creator: map['creator'] ?? false,
       createDate: map['createDate'] == null ? null : DateTime.tryParse(map['createDate']),
+      accessCode: map['accessCode'] ?? '',
     );
     return u;
   }
@@ -63,6 +70,7 @@ class User {
       'role': role.toString(),
       'creator': creator,
       'createDate': createDate.toString(),
+      'accessCode': accessCode,
     };
 
     return r;

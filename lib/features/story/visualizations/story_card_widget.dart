@@ -11,6 +11,7 @@ import 'package:teb_package/messaging/teb_custom_dialog.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_url_manager.dart';
+import 'package:teb_package/visual_elements/teb_buttons_line.dart';
 
 class StoryCard extends StatefulWidget {
   final Size size;
@@ -34,32 +35,41 @@ class StoryCard extends StatefulWidget {
 
   static Widget newCard({
     required BuildContext context,
-    required Size size,
+    //required Size size,
     required PlanningData planningData,
     required User user,
   }) {
-    return Card(
-      child: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: ClipOval(
-          child: InkWell(
-            splashColor: Theme.of(context).primaryColor,
-            onTap: () => Navigator.of(context).pushNamed(
-              Routes.storyForm,
-              arguments: {'planningData': planningData, 'user': user},
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Nova história"),
-                Icon(Icons.add, size: 50),
-              ],
-            ),
-          ),
-        ),
+    return TebButton(
+      label: 'Nova História',
+      icon: const Icon(Icons.add),
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      onPressed: () => Navigator.of(context).pushNamed(
+        Routes.storyForm,
+        arguments: {'planningData': planningData, 'user': user},
       ),
     );
+    //return Card(
+    //  child: SizedBox(
+    //    height: size.height,
+    //    width: size.width,
+    //    child: ClipOval(
+    //      child: InkWell(
+    //        splashColor: Theme.of(context).primaryColor,
+    //        onTap: () => Navigator.of(context).pushNamed(
+    //          Routes.storyForm,
+    //          arguments: {'planningData': planningData, 'user': user},
+    //        ),
+    //        child: const Column(
+    //          mainAxisAlignment: MainAxisAlignment.center,
+    //          children: <Widget>[
+    //            Text("Nova história"),
+    //            Icon(Icons.add, size: 50),
+    //          ],
+    //        ),
+    //      ),
+    //    ),
+    //  ),
+    //);
   }
 
   @override
@@ -101,13 +111,15 @@ class _StoryCardState extends State<StoryCard> {
         constraints: BoxConstraints.tightFor(height: 45, width: MediaQuery.of(dialogContext).size.width * 0.70),
         child: ElevatedButton.icon(
           onPressed: () async {
-            if (widget.votingStory.id.isNotEmpty && widget.votingStory.id != story.id) {
+            if (widget.votingStory.id.isNotEmpty &&
+                widget.votingStory.id != story.id &&
+                widget.votingStory.status != StoryStatus.votingFinished) {
               TebCustomDialog(context: context)
                   .errorMessage(message: 'Já existe uma história em votação, é necssário finalizá-la antes')
                   .then((value) => Navigator.of(dialogContext, rootNavigator: true).pop());
               return;
             }
-            if (story.status == StoryStatus.voting || story.status == StoryStatus.votingFinished) {
+            if (story.status == StoryStatus.voting) {
               (TebCustomDialog(context: context).customdialog(
                 message: 'Esta história já está em votacão, deseja cancelar a votação dela?',
                 yesButtonText: 'Sim',
@@ -282,9 +294,11 @@ class _StoryCardState extends State<StoryCard> {
       child: Padding(
         padding: const EdgeInsets.all(1.0),
         child: Card(
-          color: widget.story.status == StoryStatus.voting || widget.story.status == StoryStatus.votingFinished
-              ? Theme.of(context).primaryColorLight
-              : Theme.of(context).cardColor,
+          color: widget.story.status == StoryStatus.voting
+              ? Colors.amberAccent.withOpacity(0.50)
+              : widget.story.status == StoryStatus.votingFinished
+                  ? Theme.of(context).primaryColorLight
+                  : Theme.of(context).cardColor,
           child: SizedBox(
             height: widget.size.height,
             width: widget.size.width,

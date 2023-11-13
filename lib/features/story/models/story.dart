@@ -26,6 +26,16 @@ class Story {
     return Story.fromMap(data);
   }
 
+  int get storyStatusOrder {
+    if (status == StoryStatus.voting) {
+      return 0;
+    } else if (status == StoryStatus.created) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+
   void clear() {
     id = '';
     planningPokerId = '';
