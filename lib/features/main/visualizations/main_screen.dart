@@ -65,7 +65,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
       _initializing = false;
     }
     _size = MediaQuery.of(context).size;
-    Consts.mainAreaHeight = _size.height * 0.70;
+    //Consts.mainAreaHeight = _size.height * 0.70;
 
     if (_user.id.isEmpty || _planningData.id.isEmpty) return const Text('');
 
@@ -96,12 +96,12 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             children: [
               // stories
               SizedBox(
-                width: Consts.storyCardWidth + 5,
+                width: Consts.storiesAreaWidth,
                 child: StoriesArea(planningData: _planningData, user: _user),
               ),
               // voting area
               SizedBox(
-                width: _size.width * 0.88,
+                width: _size.width - Consts.storiesAreaWidth,
                 child: VotingArea(planningData: _planningData, user: _user),
               ),
             ],

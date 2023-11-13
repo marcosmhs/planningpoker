@@ -22,6 +22,103 @@ class MainScreenTitleBar extends StatefulWidget {
 }
 
 class _MainScreenTitleBarState extends State<MainScreenTitleBar> {
+
+  Widget _invitationData(BuildContext context) {
+    return Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    widget.planningData.invitationCode,
+                    style: TextStyle(
+                      fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                      color: Theme.of(context).cardColor,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                'Código de convite',
+                style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
+                  color: Theme.of(context).cardColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 10),
+          InkWell(
+            onTap: () {
+              Clipboard.setData(
+                ClipboardData(text: widget.planningData.invitationCode),
+              ).then(
+                (value) => TebCustomMessage(
+                    context: context,
+                    messageText: 'Código da partida copiado para a área de transferência',
+                    messageType: TebMessageType.info),
+              );
+            },
+            child: const Icon(Icons.copy, size: 15),
+          ),
+        ],
+      );
+  }
+
+  Widget _planningData(BuildContext context) {
+    return Row(
+      children: [
+        // name
+        Text(widget.planningData.name),
+        const SizedBox(width: 10),
+        // edit link
+        if (widget.user.creator)
+          GestureDetector(
+            onTap: () => Navigator.of(context).pushNamed(
+              Routes.planningDataForm,
+              arguments: {'planningData': widget.planningData, 'user': widget.user},
+            ),
+            child: const Icon(Icons.edit, size: 20),
+          ),
+      ],
+    );
+  }
+
+  Widget _usetData(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          '${widget.user.name} - ',
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+            color: Theme.of(context).cardColor,
+          ),
+        ),
+        Text(
+          widget.user.accessCode,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
+            color: Theme.of(context).cardColor,
+          ),
+        ),
+        const SizedBox(width: 10),
+        InkWell(
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: widget.user.accessCode),
+            ).then((value) => TebCustomMessage(
+                context: context,
+                messageText: 'Código de acesso copiado para a área de transferência',
+                messageType: TebMessageType.info));
+          },
+          child: const Icon(Icons.copy, size: 15),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -30,94 +127,18 @@ class _MainScreenTitleBarState extends State<MainScreenTitleBar> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Planning data
-            Row(
-              children: [
-                // name
-                Text(widget.planningData.name),
-                const SizedBox(width: 10),
-                // edit link
-                if (widget.user.creator)
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pushNamed(
-                      Routes.planningDataForm,
-                      arguments: {'planningData': widget.planningData, 'user': widget.user},
-                    ),
-                    child: const Icon(Icons.edit, size: 20),
-                  ),
-              ],
-            ),
-            // user info
-            Row(
-              children: [
-                Text(
-                  '${widget.user.name} - ',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                    color: Theme.of(context).cardColor,
-                  ),
-                ),
-                Text(
-                  widget.user.accessCode,
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-                    color: Theme.of(context).cardColor,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    Clipboard.setData(
-                      ClipboardData(text: widget.user.accessCode),
-                    ).then((value) => TebCustomMessage(
-                        context: context,
-                        messageText: 'Código de acesso copiado para a área de transferência',
-                        messageType: TebMessageType.info));
-                  },
-                  child: const Icon(Icons.copy, size: 15),
-                ),
-              ],
-            ),
+            _planningData(context),
+            // User data
+            _usetData(context),
           ],
         ),
         const SizedBox(width: 20),
 
-        // invitation code
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  widget.planningData.invitationCode,
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                    color: Theme.of(context).cardColor,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'Código de convite',
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-                color: Theme.of(context).cardColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(width: 10),
-        InkWell(
-          onTap: () {
-            Clipboard.setData(
-              ClipboardData(text: widget.planningData.invitationCode),
-            ).then((value) => TebCustomMessage(
-                context: context,
-                messageText: 'Código da partida copiado para a área de transferência',
-                messageType: TebMessageType.info));
-          },
-          child: const Icon(Icons.copy, size: 15),
-        ),
+        // invitation data
+        _invitationData(context),
       ],
     );
   }
+
+  
 }

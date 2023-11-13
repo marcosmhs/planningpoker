@@ -49,7 +49,6 @@ class _StoriesAreaState extends State<StoriesArea> {
           children: [
             if (widget.user.creator)
               StoryCard.newCard(
-                  //size: Size(Consts.storyCardWidth, Consts.storyCardHeight - 50),
                   context: context,
                   planningData: widget.planningData,
                   user: widget.user),
