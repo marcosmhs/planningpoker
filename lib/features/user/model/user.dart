@@ -36,9 +36,9 @@ class User {
     this.creator = false,
     this.role = Role.player,
     this.createDate,
-    String? accessCode,
+    String accessCode = '',
   }) {
-    this.accessCode = accessCode ?? TebUidGenerator.userAccessCode;
+    this.accessCode = accessCode.isNotEmpty ? accessCode : TebUidGenerator.userAccessCode;
   }
 
   factory User.fromDocument(DocumentSnapshot doc) {

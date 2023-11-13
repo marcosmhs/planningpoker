@@ -24,7 +24,7 @@ class _WellComeScreenState extends State<WellComeScreen> {
   var _info = TebUtil.packageInfo;
   final TextEditingController _invitationCodeController = TextEditingController();
   final TextEditingController _userAccessCodeController = TextEditingController();
-  var _user = User();
+  final _user = User();
   var _planningData = PlanningData();
   var _initializing = true;
   var analytics = FirebaseAnalytics.instance;
@@ -51,12 +51,11 @@ class _WellComeScreenState extends State<WellComeScreen> {
     if (userAccessCode.isEmpty) {
       await _setUserData(buildContext: context);
     } else {
-      
       var user = await UserController().getUserByAccessCode(
         planningId: _planningData.id,
         userAccessCode: userAccessCode,
       );
-      
+
       if (user.id.isEmpty) {
         TebCustomMessage.error(context, message: 'Código de acesso não encontrado');
         return;
@@ -98,6 +97,7 @@ class _WellComeScreenState extends State<WellComeScreen> {
                     labelText: 'Código de acesso',
                     hintText: 'Informe seu código de acesso',
                     onSave: (value) => _user.accessCode = value ?? '',
+                    initialValue: _user.accessCode,
                     prefixIcon: Icons.lock_person,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) => _user.accessCode = value ?? '',
