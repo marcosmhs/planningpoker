@@ -274,8 +274,9 @@ class _StoryCardState extends State<StoryCard> {
                   _editStory(dialogContext: dialogContext, context: context, story: story),
                   // set to vote
                   _setStoryToVote(dialogContext: dialogContext, context: context, story: story),
-                  // Finalize vote
-                  _finishStoryVote(dialogContext: dialogContext, context: context, story: story),
+                  if (story.status == StoryStatus.voting)
+                    // Finalize vote
+                    _finishStoryVote(dialogContext: dialogContext, context: context, story: story),
                   // delete
                   _deleteStory(dialogContext: dialogContext, context: context, story: story),
                 ],
@@ -295,9 +296,9 @@ class _StoryCardState extends State<StoryCard> {
         padding: const EdgeInsets.all(1.0),
         child: Card(
           color: widget.story.status == StoryStatus.voting
-              ? Colors.amberAccent.withOpacity(0.50)
+              ? Theme.of(context).primaryColorLight
               : widget.story.status == StoryStatus.votingFinished
-                  ? Theme.of(context).primaryColorLight
+                  ? Theme.of(context).primaryColorDark.withAlpha(50)
                   : Theme.of(context).cardColor,
           child: SizedBox(
             height: widget.size.height,
@@ -341,15 +342,15 @@ class _StoryCardState extends State<StoryCard> {
                     ),
                   ),
                 // Status
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    widget.story.status == StoryStatus.closed
-                        ? '${widget.story.statusLabel} - ${widget.story.points} pontos'
-                        : widget.story.statusLabel,
-                    style: TextStyle(color: Theme.of(context).primaryColor),
-                  ),
-                ),
+                //Padding(
+                //  padding: const EdgeInsets.all(5.0),
+                //  child: Text(
+                //    widget.story.status == StoryStatus.closed
+                //        ? '${widget.story.statusLabel} - ${widget.story.points} pontos'
+                //        : widget.story.statusLabel,
+                //    style: TextStyle(color: Theme.of(context).primaryColor),
+                //  ),
+                //),
               ],
             ),
           ),

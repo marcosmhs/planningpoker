@@ -13,7 +13,7 @@ class Consts {
     {0: 'Um café'},
     {1: 'Um'},
     {2: 'Dois'},
-    {3: 'Dois'},
+    {3: 'Três'},
     {5: 'Cinco'},
     {8: 'Oito'},
     {13: 'Treze'},

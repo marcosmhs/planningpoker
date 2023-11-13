@@ -6,6 +6,7 @@ import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 
 class VoteCard extends StatefulWidget {
   final BuildContext context;
@@ -28,7 +29,12 @@ class VoteCard extends StatefulWidget {
   @override
   State<VoteCard> createState() => _VoteCardState();
 
-  static Widget listCardsForVote({required BuildContext context, required User user, required Story votingStory, required StoryVote storyVote}) {
+  static Widget listCardsForVote({
+    required BuildContext context,
+    required User user,
+    required Story votingStory,
+    required StoryVote storyVote,
+  }) {
     return Container(
       padding: const EdgeInsets.all(8),
       height: MediaQuery.of(context).size.height * (kIsWeb ? 0.70 : 0.68),
@@ -54,7 +60,11 @@ class VoteCard extends StatefulWidget {
     );
   }
 
-  static Widget castedVotesList({required BuildContext context, required User user, required List<StoryVote> storyVotes}) {
+  static Widget castedVotesList({
+    required BuildContext context,
+    required User user,
+    required List<StoryVote> storyVotes,
+  }) {
     return Container(
       padding: const EdgeInsets.all(8),
       height: MediaQuery.of(context).size.height * 0.58,
@@ -79,7 +89,6 @@ class VoteCard extends StatefulWidget {
       ),
     );
   }
-
 }
 
 class _VoteCardState extends State<VoteCard> {
@@ -121,9 +130,14 @@ class _VoteCardState extends State<VoteCard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  widget.name,
-                  style: Theme.of(context).textTheme.labelLarge,
+                ListTile(
+                  title: TebText(
+                    widget.name,
+                    textAlign: TextAlign.center,
+                    textStyle: Theme.of(context).textTheme.labelLarge!.fontStyle,
+                    textColor: Theme.of(context).textTheme.labelLarge!.color,
+                    textSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 widget.vote == 0
