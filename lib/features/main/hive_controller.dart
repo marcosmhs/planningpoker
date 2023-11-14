@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
@@ -12,8 +12,19 @@ class HiveController with ChangeNotifier {
   final _planningDataHiveBoxName = 'planningData';
   late Box<dynamic> _planningDataHiveBox;
 
+  final _themeModeHiveBoxName = 'themeMode';
+  late Box<dynamic> _themeModeHiveBox;
+
   var _user = User();
   var _planningData = PlanningData();
+
+  Future<void> _prepareThemeModeHiveBox() async {
+    if (!Hive.isBoxOpen(_themeModeHiveBoxName)) {
+      _themeModeHiveBox = await Hive.openBox(_themeModeHiveBoxName);
+    } else {
+      _themeModeHiveBox = Hive.box(_themeModeHiveBoxName);
+    }
+  }
 
   Future<void> _prepareUserHiveBox() async {
     if (!Hive.isBoxOpen(_userHiveBoxName)) {
@@ -31,7 +42,23 @@ class HiveController with ChangeNotifier {
     }
   }
 
+  Future<ThemeMode> getLocalThemeMode() async {
+    await _prepareThemeModeHiveBox();
+
+    if (_themeModeHiveBox.isEmpty) {
+      return ThemeMode.dark;
+    } else {
+      var tm = _themeModeHiveBox.get('themeMode');
+      if (tm.toString() == ThemeMode.dark.name) {
+        return ThemeMode.dark;
+      } else {
+        return ThemeMode.light;
+      }
+    }
+  }
+
   Future<void> chechLocalData() async {
+    // user data
     await _prepareUserHiveBox();
     if (_userHiveBox.isNotEmpty) {
       _user = _userHiveBox.get(_userHiveBox.keyAt(0));
@@ -96,5 +123,11 @@ class HiveController with ChangeNotifier {
   void clearPlanningDataHiveBox() async {
     await _preparePlanningDataHiveBox();
     await _planningDataHiveBox.clear();
+  }
+
+  void saveThemeMode({required ThemeMode themeMode}) async {
+    await _prepareThemeModeHiveBox();
+    await _themeModeHiveBox.clear();
+    await _themeModeHiveBox.put('themeMode', themeMode.name);
   }
 }

@@ -4,6 +4,7 @@ import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 
 class MainScreenTitleBar extends StatefulWidget {
   final PlanningData planningData;
@@ -22,56 +23,55 @@ class MainScreenTitleBar extends StatefulWidget {
 }
 
 class _MainScreenTitleBarState extends State<MainScreenTitleBar> {
-
   Widget _invitationData(BuildContext context) {
     return Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.planningData.invitationCode,
-                    style: TextStyle(
-                      fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-                      color: Theme.of(context).cardColor,
-                    ),
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  widget.planningData.invitationCode,
+                  style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
+                    //color: Theme.of(context).cardColor,
                   ),
-                ],
-              ),
-              Text(
-                'Código de convite',
-                style: TextStyle(
-                  fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-                  color: Theme.of(context).cardColor,
                 ),
+              ],
+            ),
+            Text(
+              'Código de convite',
+              style: TextStyle(
+                fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
+                //color: Theme.of(context).cardColor,
               ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          InkWell(
-            onTap: () {
-              Clipboard.setData(
-                ClipboardData(text: widget.planningData.invitationCode),
-              ).then(
-                (value) => TebCustomMessage(
-                    context: context,
-                    messageText: 'Código da partida copiado para a área de transferência',
-                    messageType: TebMessageType.info),
-              );
-            },
-            child: const Icon(Icons.copy, size: 15),
-          ),
-        ],
-      );
+            ),
+          ],
+        ),
+        const SizedBox(width: 10),
+        InkWell(
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: widget.planningData.invitationCode),
+            ).then(
+              (value) => TebCustomMessage(
+                  context: context,
+                  messageText: 'Código da partida copiado para a área de transferência',
+                  messageType: TebMessageType.info),
+            );
+          },
+          child: const Icon(Icons.copy, size: 15),
+        ),
+      ],
+    );
   }
 
   Widget _planningData(BuildContext context) {
     return Row(
       children: [
         // name
-        Text(widget.planningData.name),
+        TebText(widget.planningData.name),
         const SizedBox(width: 10),
         // edit link
         if (widget.user.creator)
@@ -89,19 +89,13 @@ class _MainScreenTitleBarState extends State<MainScreenTitleBar> {
   Widget _usetData(BuildContext context) {
     return Row(
       children: [
-        Text(
+        TebText(
           '${widget.user.name} - ',
-          style: TextStyle(
-            fontSize: Theme.of(context).textTheme.labelLarge!.fontSize,
-            color: Theme.of(context).cardColor,
-          ),
+          textSize: Theme.of(context).textTheme.labelLarge!.fontSize,
         ),
-        Text(
+        TebText(
           widget.user.accessCode,
-          style: TextStyle(
-            fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-            color: Theme.of(context).cardColor,
-          ),
+          textSize: Theme.of(context).textTheme.labelMedium!.fontSize,
         ),
         const SizedBox(width: 10),
         InkWell(
@@ -139,6 +133,4 @@ class _MainScreenTitleBarState extends State<MainScreenTitleBar> {
       ],
     );
   }
-
-  
 }

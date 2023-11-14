@@ -9,7 +9,6 @@ import 'package:planningpoker/features/main/visualizations/wellcome_screen.dart'
 
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
-
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
 
@@ -62,7 +61,7 @@ class _LandingScreenState extends State<LandingScreen> {
             hiveController.clearPlanningDataHiveBox();
             hiveController.clearUserHiveBox();
             analytics.logEvent(name: 'landing_error');
-            return _errorScreen(errorMessage:  snapshot.error.toString());
+            return _errorScreen(errorMessage: snapshot.error.toString());
             // ao final do processo
           } else {
             // irá avaliar se o usuário possui login ou não

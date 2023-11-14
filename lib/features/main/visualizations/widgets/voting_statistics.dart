@@ -64,9 +64,10 @@ class _VontingStatisticsState extends State<VontingStatistics> {
                           if (!value) TebCustomMessage.error(context, message: 'Erro ao abrir o link');
                         });
                       },
-                      child: Text(
+                      child: TebText(
                         'Mais detalhes',
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontStyle: FontStyle.italic),
+                        textStyle: FontStyle.italic,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ),
                   ),

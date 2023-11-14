@@ -13,7 +13,7 @@ import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
-import 'package:provider/provider.dart';
+import 'package:planningpoker/main.dart';
 import 'package:teb_package/messaging/teb_custom_dialog.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
@@ -45,8 +45,8 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
             message: 'Tem certeza que deseja abandona a partida?\n\nIsso fará com que seu acesso seja removido permanentemente.')
         .then((response) {
       if (response == true) {
-        Provider.of<PlanningPokerController>(context, listen: false).clearCurrentPlanning();
-        Provider.of<UserController>(context, listen: false).clearCurrentUser();
+        PlanningPokerController().clearCurrentPlanning();
+        UserController().clearCurrentUser();
         Navigator.of(context).popAndPushNamed(Routes.landingScreen);
       }
     });
@@ -74,6 +74,12 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         title: MainScreenTitleBar(planningData: _planningData, user: _user, context: context),
         actions: [
+          IconButton(
+            onPressed: () {
+              PlanningPokerMain.of(context)?.changeTheme();
+            },
+            icon: const Icon(Icons.light_mode_outlined),
+          ),
           const AboutDialogButton(),
           IconButton(
             onPressed: () => _confirmPlanningExit(),
@@ -82,7 +88,7 @@ class _MainScreen extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
       body: StreamBuilder(
-        stream: Provider.of<PlanningPokerController>(context, listen: false).getPlanningData(planningId: _planningData.id),
+        stream: PlanningPokerController().getPlanningData(planningId: _planningData.id),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: Text('Parece que houve um erro, pois não há dados da planning e você está nesta tela'));

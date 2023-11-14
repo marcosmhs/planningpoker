@@ -12,6 +12,7 @@ import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_url_manager.dart';
 import 'package:teb_package/visual_elements/teb_buttons_line.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 
 class StoryCard extends StatefulWidget {
   final Size size;
@@ -335,22 +336,13 @@ class _StoryCardState extends State<StoryCard> {
                           if (!value) TebCustomMessage.error(context, message: 'Erro ao abrir o link');
                         });
                       },
-                      child: Text(
+                      child: TebText(
                         'Mais detalhes',
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontStyle: FontStyle.italic),
+                        textStyle: FontStyle.italic,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ),
                   ),
-                // Status
-                //Padding(
-                //  padding: const EdgeInsets.all(5.0),
-                //  child: Text(
-                //    widget.story.status == StoryStatus.closed
-                //        ? '${widget.story.statusLabel} - ${widget.story.points} pontos'
-                //        : widget.story.statusLabel,
-                //    style: TextStyle(color: Theme.of(context).primaryColor),
-                //  ),
-                //),
               ],
             ),
           ),

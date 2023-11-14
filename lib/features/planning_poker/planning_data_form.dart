@@ -10,7 +10,6 @@ import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:provider/provider.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 import 'package:teb_package/util/teb_return.dart';
@@ -37,7 +36,6 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
   bool _savingData = false;
   bool _newPlanning = false;
 
-
   void _submit() async {
     if (_savingData) return;
 
@@ -48,8 +46,8 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
     } else {
       // salva os dados
       _formKey.currentState?.save();
-      PlanningPokerController planningController = Provider.of(context, listen: false);
-      UserController userController = Provider.of(context, listen: false);
+      var planningController = PlanningPokerController();
+      var userController = UserController();
       TebCustomReturn retorno;
       try {
         if (_planningData.id.isEmpty) {

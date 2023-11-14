@@ -9,7 +9,6 @@ import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:provider/provider.dart';
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 import 'package:teb_package/util/teb_return.dart';
@@ -54,7 +53,7 @@ class _StoryFormState extends State<StoryForm> {
     } else {
       // salva os dados
       _formKey.currentState?.save();
-      StoryController storyController = Provider.of(context, listen: false);
+      var storyController = StoryController();
       TebCustomReturn retorno;
       try {
         // remove a marcação de história em votação

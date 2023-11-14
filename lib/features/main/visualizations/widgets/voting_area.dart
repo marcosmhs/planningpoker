@@ -122,7 +122,7 @@ class _VotingAreaState extends State<VotingArea> {
                           textWeight: players[index].id == widget.user.id ? FontWeight.bold : null,
                         ),
                         trailing: storyVotesList.where((v) => v.userId == players[index].id).isNotEmpty
-                            ? Icon(Icons.back_hand, color: Theme.of(context).primaryColor)
+                            ? Icon(Icons.back_hand, color: Theme.of(context).colorScheme.inversePrimary)
                             : null,
                       ),
                     );

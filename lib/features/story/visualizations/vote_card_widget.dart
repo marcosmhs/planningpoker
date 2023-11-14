@@ -96,7 +96,7 @@ class _VoteCardState extends State<VoteCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor, width: 2),
+        border: Border.all(color: Theme.of(context).colorScheme.inverseSurface, width: 2),
         borderRadius: BorderRadius.circular(8),
         color: widget.enhance ? Theme.of(context).primaryColorLight : Theme.of(context).cardColor,
       ),

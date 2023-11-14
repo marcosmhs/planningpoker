@@ -20,10 +20,9 @@ dependencies:
     path: ../teb_package
   
   build_runner: ^2.4.6
-  json_theme: ^4.0.0
+  json_theme: ^6.3.2
   intl: ^0.18.1
   flutter_localization: ^0.1.13
-  provider: ^6.0.3
   cloud_firestore: ^4.9.0
   firebase_auth: ^4.8.0
   shared_preferences: ^2.2.1
