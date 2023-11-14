@@ -6,21 +6,23 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
+import 'package:planningpoker/features/main/visualizations/about_dialog_button.dart';
 import 'package:planningpoker/features/main/visualizations/botton_info.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
+import 'package:planningpoker/main.dart';
 import 'package:teb_package/teb_package.dart';
 
-class WellComeScreen extends StatefulWidget {
-  const WellComeScreen({super.key});
+class WellcomeScreen extends StatefulWidget {
+  const WellcomeScreen({super.key});
 
   @override
-  State<WellComeScreen> createState() => _WellComeScreenState();
+  State<WellcomeScreen> createState() => _WellcomeScreenState();
 }
 
-class _WellComeScreenState extends State<WellComeScreen> {
+class _WellcomeScreenState extends State<WellcomeScreen> {
   var _info = TebUtil.packageInfo;
   final TextEditingController _invitationCodeController = TextEditingController();
   final TextEditingController _userAccessCodeController = TextEditingController();
@@ -115,8 +117,8 @@ class _WellComeScreenState extends State<WellComeScreen> {
                           constraints: const BoxConstraints.tightFor(height: 40),
                           child: ToggleButtons(
                             isSelected: selectedRole,
-                            fillColor: Theme.of(context).primaryColor,
-                            selectedColor: Colors.black,
+                            fillColor: Theme.of(context).colorScheme.inversePrimary,
+                            selectedColor: Theme.of(context).colorScheme.inversePrimary,
                             onPressed: (index) {
                               setState(() {
                                 _user.role = index == 0 ? Role.player : Role.spectator;
@@ -220,15 +222,15 @@ class _WellComeScreenState extends State<WellComeScreen> {
           )
         ],
       ),
-      //appBarActions: [
-      //  IconButton(
-      //      onPressed: () {
-      //        TebCustomDialog(context: context).informationDialog(
-      //            message:
-      //                'Desenvolvido por um programador entediado durante suas férias.\n\nImportante:\n1 - Evite colocar dados sensíveis nas descrições dos cards.\n2 - Plannings com mais de 5 dias serão excluídas\n\n Divirta-se');
-      //      },
-      //      icon: const Icon(Icons.question_mark))
-      //],
+      appBarActions: [
+        IconButton(
+          onPressed: () {
+            PlanningPokerMain.of(context)?.changeTheme();
+          },
+          icon: const Icon(Icons.light_mode_outlined),
+        ),
+        const AboutDialogButton(),
+      ],
       body: Center(
         child: SingleChildScrollView(
           child: SizedBox(

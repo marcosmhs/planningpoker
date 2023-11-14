@@ -66,7 +66,7 @@ class _LandingScreenState extends State<LandingScreen> {
           } else {
             // irá avaliar se o usuário possui login ou não
             return hiveController.localUser.id.isEmpty
-                ? const WellComeScreen()
+                ? const WellcomeScreen()
                 : MainScreen(
                     user: hiveController.localUser,
                     planningData: hiveController.localPlanningData,
