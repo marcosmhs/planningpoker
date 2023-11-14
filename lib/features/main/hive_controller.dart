@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
@@ -6,8 +7,8 @@ import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 
 class HiveController with ChangeNotifier {
-  final _userHiveBoxName = 'user';
-  late Box<dynamic> _userHiveBox;
+  final _playerHiveBoxName = 'player';
+  late Box<dynamic> _playerHiveBox;
 
   final _planningDataHiveBoxName = 'planningData';
   late Box<dynamic> _planningDataHiveBox;
@@ -27,10 +28,10 @@ class HiveController with ChangeNotifier {
   }
 
   Future<void> _prepareUserHiveBox() async {
-    if (!Hive.isBoxOpen(_userHiveBoxName)) {
-      _userHiveBox = await Hive.openBox(_userHiveBoxName);
+    if (!Hive.isBoxOpen(_playerHiveBoxName)) {
+      _playerHiveBox = await Hive.openBox(_playerHiveBoxName);
     } else {
-      _userHiveBox = Hive.box(_userHiveBoxName);
+      _playerHiveBox = Hive.box(_playerHiveBoxName);
     }
   }
 
@@ -58,43 +59,50 @@ class HiveController with ChangeNotifier {
   }
 
   Future<void> chechLocalData() async {
-    // user data
-    await _prepareUserHiveBox();
-    if (_userHiveBox.isNotEmpty) {
-      _user = _userHiveBox.get(_userHiveBox.keyAt(0));
-    }
-
-    //se a data de criação do usuário + 5 dias é menor que a data atual significa que ele foi
-    //criado a mais de 5 dias, ou seja,  ele não deve mais existir
-    if (_user.createDate != null && _user.createDate!.add(const Duration(days: 5)).isBefore(DateTime.now())) {
-      clearUserHiveBox();
-      clearPlanningDataHiveBox();
-      _planningData = PlanningData();
-      _user = User();
-    } else {
-      await _preparePlanningDataHiveBox();
-      if (_planningDataHiveBox.isNotEmpty) {
-        _planningData = _planningDataHiveBox.get(_planningDataHiveBox.keyAt(0));
+    try {
+      // user data
+      await _prepareUserHiveBox();
+      if (_playerHiveBox.isNotEmpty) {
+        _user = _playerHiveBox.get(_playerHiveBox.keyAt(0));
       }
 
-      var planningPokerController = PlanningPokerController();
-
-      if (_planningData.id.isEmpty) return;
-
-      var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
-
-      if (!planningExists) {
+      //se a data de criação do usuário + 5 dias é menor que a data atual significa que ele foi
+      //criado a mais de 5 dias, ou seja,  ele não deve mais existir
+      if (_user.createDate != null && _user.createDate!.add(const Duration(days: 5)).isBefore(DateTime.now())) {
         clearUserHiveBox();
         clearPlanningDataHiveBox();
         _planningData = PlanningData();
         _user = User();
+      } else {
+        await _preparePlanningDataHiveBox();
+        if (_planningDataHiveBox.isNotEmpty) {
+          _planningData = _planningDataHiveBox.get(_planningDataHiveBox.keyAt(0));
+        }
+
+        var planningPokerController = PlanningPokerController();
+
+        if (_planningData.id.isEmpty) return;
+
+        var planningExists = await planningPokerController.planningExists(planningId: _planningData.id);
+
+        if (!planningExists) {
+          clearUserHiveBox();
+          clearPlanningDataHiveBox();
+          _planningData = PlanningData();
+          _user = User();
+        }
       }
+    } catch (e) {
+      var analytics = FirebaseAnalytics.instance;
+      analytics.logEvent(name: 'hive_error ${e.toString()}');
+      clearPlanningDataHiveBox();
+      clearUserHiveBox();
     }
   }
 
   Future<void> removeBox() async {
     await _prepareUserHiveBox();
-    await _userHiveBox.deleteFromDisk();
+    await _playerHiveBox.deleteFromDisk();
 
     await _preparePlanningDataHiveBox();
     await _planningDataHiveBox.deleteFromDisk();
@@ -105,8 +113,8 @@ class HiveController with ChangeNotifier {
 
   void saveUser({required User user}) async {
     await _prepareUserHiveBox();
-    await _userHiveBox.clear();
-    await _userHiveBox.put(user.id, user);
+    await _playerHiveBox.clear();
+    await _playerHiveBox.put(user.id, user);
   }
 
   void savePlanningData({required PlanningData planningData}) async {
@@ -117,12 +125,14 @@ class HiveController with ChangeNotifier {
 
   void clearUserHiveBox() async {
     await _prepareUserHiveBox();
-    await _userHiveBox.clear();
+    await _playerHiveBox.clear();
+    await _playerHiveBox.deleteFromDisk();
   }
 
   void clearPlanningDataHiveBox() async {
     await _preparePlanningDataHiveBox();
     await _planningDataHiveBox.clear();
+    await _planningDataHiveBox.deleteFromDisk();
   }
 
   void saveThemeMode({required ThemeMode themeMode}) async {

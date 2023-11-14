@@ -60,15 +60,14 @@ void main() async {
   var darkThemeData = ThemeData();
   var lightThemeData = ThemeData();
 
-  var dartThemeStr = await rootBundle.loadString('dark_theme.json');
+  var dartThemeStr = await rootBundle.loadString('assets/dark_theme.json');
   var darkThemeJson = json.decode(dartThemeStr);
   darkThemeData = ThemeDecoder.decodeThemeData(
         darkThemeJson,
         validate: true,
       ) ??
       ThemeData();
-
-  var lightThemeStr = await rootBundle.loadString('light_theme.json');
+  var lightThemeStr = await rootBundle.loadString('assets/light_theme.json');
   var lightThemeJson = json.decode(lightThemeStr);
   lightThemeData = ThemeDecoder.decodeThemeData(
         lightThemeJson,

@@ -117,8 +117,8 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                           constraints: const BoxConstraints.tightFor(height: 40),
                           child: ToggleButtons(
                             isSelected: selectedRole,
-                            fillColor: Theme.of(context).colorScheme.inversePrimary,
-                            selectedColor: Theme.of(context).colorScheme.inversePrimary,
+                            fillColor: Theme.of(context).primaryColorLight,
+                            selectedColor: Theme.of(context).primaryColorLight,
                             onPressed: (index) {
                               setState(() {
                                 _user.role = index == 0 ? Role.player : Role.spectator;
@@ -211,14 +211,11 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Text('Planning Poker'),
+          const TebText('Planning Poker'),
           const SizedBox(width: 10),
-          Text(
+          TebText(
             'v${_info.version}-${_info.buildNumber}',
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.labelMedium!.fontSize,
-              color: Theme.of(context).colorScheme.background,
-            ),
+            textSize: Theme.of(context).textTheme.labelMedium!.fontSize,
           )
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teb_package/util/teb_url_manager.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 
 class BottonInfo extends StatelessWidget {
   const BottonInfo({
@@ -28,19 +29,15 @@ class BottonInfo extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            TebText(
                               'Desenvolvido por ',
-                              style:
-                                  TextStyle(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize, color: Colors.black54),
+                              textSize: Theme.of(context).textTheme.titleMedium!.fontSize,
                             ),
                             InkWell(
                               onTap: () => TebUrlManager.launchUrl(url: 'https://www.marcosmhs.com.br'),
-                              child: Text(
+                              child: TebText(
                                 'Marcos H. Silva',
-                                style: TextStyle(
-                                  fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
-                                  color: Colors.black54,
-                                ),
+                                textSize: Theme.of(context).textTheme.titleMedium!.fontSize,
                               ),
                             ),
                           ],
@@ -50,12 +47,12 @@ class BottonInfo extends StatelessWidget {
                           children: [
                             InkWell(
                               onTap: () => TebUrlManager.launchUrl(url: 'mailto:marcosmhs@live.com'),
-                              child: const Text('marcosmhs@live.com', style: TextStyle(color: Colors.black54)),
+                              child: const TebText('marcosmhs@live.com'),
                             ),
                             const SizedBox(width: 20),
                             InkWell(
                               onTap: () => TebUrlManager.launchUrl(url: 'https://github.com/marcosmhs/'),
-                              child: const Text('https://github.com/marcosmhs/', style: TextStyle(color: Colors.black54)),
+                              child: const TebText('https://github.com/marcosmhs/'),
                             )
                           ],
                         ),

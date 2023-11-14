@@ -49,7 +49,7 @@ class _AboutDialogButtonState extends State<AboutDialogButton> {
                         onTap: () => TebUrlManager.launchUrl(url: 'https://www.marcosmhs.com.br'),
                         child: TebText(
                           'Marcos H. Silva',
-                          textColor: Theme.of(context).primaryColor,
+                          textColor: Theme.of(context).colorScheme.inversePrimary,
                           textSize: 15,
                         ),
                       ),
@@ -58,12 +58,12 @@ class _AboutDialogButtonState extends State<AboutDialogButton> {
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () => TebUrlManager.launchUrl(url: 'mailto:marcosmhs@live.com'),
-                    child: TebText('marcosmhs@live.com', textColor: Theme.of(context).primaryColor),
+                    child: TebText('marcosmhs@live.com', textColor: Theme.of(context).colorScheme.inversePrimary),
                   ),
                   const SizedBox(height: 10),
                   InkWell(
                     onTap: () => TebUrlManager.launchUrl(url: 'https://github.com/marcosmhs/'),
-                    child: TebText('https://github.com/marcosmhs/', textColor: Theme.of(context).primaryColor),
+                    child: TebText('https://github.com/marcosmhs/', textColor: Theme.of(context).colorScheme.inversePrimary),
                   ),
                   const SizedBox(height: 20),
                   Row(
