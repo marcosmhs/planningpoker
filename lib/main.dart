@@ -1,9 +1,6 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:planningpoker/features/main/hive_controller.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/visualizations/landing_screen.dart';
@@ -14,13 +11,13 @@ import 'package:planningpoker/features/planning_poker/planning_data_form.dart';
 import 'package:planningpoker/features/story/visualizations/story_form.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 
-import 'package:json_theme/json_theme.dart';
-
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
+import 'package:planningpoker/local_data_controller.dart';
+import 'package:teb_package/teb_package.dart';
 import 'firebase_options.dart';
 
 class XDPathUrlStrategy extends HashUrlStrategy {
@@ -57,29 +54,21 @@ void main() async {
 
   setUrlStrategy(XDPathUrlStrategy());
 
-  var darkThemeData = ThemeData();
-  var lightThemeData = ThemeData();
+  var tebThemeController = TebThemeController(
+    lightThemeAssetPath: 'assets/light_theme.json',
+    darkThemeAssetPath: 'assets/dark_theme.json',
+    useMaterial3: false,
+    useDebugLog: true,
+    fireStoreInstance: FirebaseFirestore.instance,
+  );
 
-  var dartThemeStr = await rootBundle.loadString('assets/dark_theme.json');
-  var darkThemeJson = json.decode(dartThemeStr);
-  darkThemeData = ThemeDecoder.decodeThemeData(
-        darkThemeJson,
-        validate: true,
-      ) ??
-      ThemeData();
-  var lightThemeStr = await rootBundle.loadString('assets/light_theme.json');
-  var lightThemeJson = json.decode(lightThemeStr);
-  lightThemeData = ThemeDecoder.decodeThemeData(
-        lightThemeJson,
-        validate: true,
-      ) ??
-      ThemeData();
+  await tebThemeController.loadThemeData;
 
-  var localThemeMode = await HiveController().getLocalThemeMode();
+  var localThemeMode = await LocalDataController().getLocalThemeMode();
 
   runApp(PlanningPokerMain(
-    darkThemeData: darkThemeData,
-    lightThemeData: lightThemeData,
+    darkThemeData: tebThemeController.darkThemeData,
+    lightThemeData: tebThemeController.lightThemeData,
     localThemeMode: localThemeMode,
   ));
 }
@@ -112,16 +101,16 @@ class _PlanningPokerMainState extends State<PlanningPokerMain> {
 
   void changeTheme({ThemeMode? localThemeMode}) {
     if (localThemeMode != null) {
-      HiveController().saveThemeMode(themeMode: localThemeMode);
+      LocalDataController().saveUserThemeMode(userThemeMode: UserThemeMode(themeName: localThemeMode.name));
       setState(() => _themeMode = localThemeMode);
       return;
     }
 
     if (_themeMode == ThemeMode.dark) {
-      HiveController().saveThemeMode(themeMode: ThemeMode.light);
+      LocalDataController().saveUserThemeMode(userThemeMode: UserThemeMode(themeName: ThemeMode.light.name));
       setState(() => _themeMode = ThemeMode.light);
     } else {
-      HiveController().saveThemeMode(themeMode: ThemeMode.dark);
+      LocalDataController().saveUserThemeMode(userThemeMode: UserThemeMode(themeName: ThemeMode.dark.name));
       setState(() => _themeMode = ThemeMode.dark);
     }
   }

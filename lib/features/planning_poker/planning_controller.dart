@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:planningpoker/features/main/hive_controller.dart';
+
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
+import 'package:planningpoker/local_data_controller.dart';
 import 'package:teb_package/util/teb_return.dart';
 
 class PlanningPokerController with ChangeNotifier {
@@ -12,7 +13,7 @@ class PlanningPokerController with ChangeNotifier {
     _currentPlanning = PlanningData();
   }
 
-  PlanningData get currentPlanning => PlanningData.fromMap(_currentPlanning.toMap());
+  PlanningData get currentPlanning => PlanningData.fromMap(_currentPlanning.toMap);
 
   Future<TebCustomReturn> setPlanningDataByInvitation({required String invitationCode}) async {
     try {
@@ -28,7 +29,7 @@ class PlanningPokerController with ChangeNotifier {
 
       _currentPlanning = PlanningData.fromMap(dataList.first);
 
-      var hiveController = HiveController();
+      var hiveController = LocalDataController();
       hiveController.savePlanningData(planningData: _currentPlanning);
 
       return TebCustomReturn.sucess;
@@ -40,12 +41,11 @@ class PlanningPokerController with ChangeNotifier {
   Future<TebCustomReturn> save({required PlanningData planningData}) async {
     try {
       planningData.createDate = DateTime.now();
-      await FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningData.id).set(planningData.toMap());
+      await FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningData.id).set(planningData.toMap);
 
-      _currentPlanning = PlanningData.fromMap(planningData.toMap());
+      _currentPlanning = PlanningData.fromMap(planningData.toMap);
 
-      var hiveController = HiveController();
-      hiveController.savePlanningData(planningData: _currentPlanning);
+      LocalDataController().savePlanningData(planningData: _currentPlanning);
 
       return TebCustomReturn.sucess;
     } catch (e) {
@@ -65,8 +65,8 @@ class PlanningPokerController with ChangeNotifier {
   }
 
   void clearCurrentPlanning() async {
-    var hiveController = HiveController();
-    hiveController.clearPlanningDataHiveBox();
+    var hiveController = LocalDataController();
+    hiveController.clearPlanningData();
     _currentPlanning = PlanningData();
   }
 }

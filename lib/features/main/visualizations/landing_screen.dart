@@ -1,11 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 
-import 'package:planningpoker/features/main/hive_controller.dart';
+//import 'package:planningpoker/hive_controller.dart';
 import 'package:planningpoker/features/main/visualizations/main_screen.dart';
 import 'package:planningpoker/features/main/visualizations/wellcome_screen.dart';
+import 'package:planningpoker/local_data_controller.dart';
+import 'package:teb_package/log/debug_log/teb_debug_log.dart';
 
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
@@ -47,10 +50,12 @@ class _LandingScreenState extends State<LandingScreen> {
       _initializing = false;
     }
 
-    var hiveController = HiveController();
+    var localDataController = LocalDataController();
+
+    TebDebugLog(fireStoreInstance: FirebaseFirestore.instance, message: 'landing_screen start');
 
     return FutureBuilder(
-      future: hiveController.chechLocalData(),
+      future: localDataController.chechLocalData(),
       builder: (ctx, snapshot) {
         // enquanto está carregando
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,19 +63,22 @@ class _LandingScreenState extends State<LandingScreen> {
           // em caso de erro
         } else {
           if (snapshot.error != null) {
-            hiveController.clearPlanningDataHiveBox();
-            hiveController.clearUserHiveBox();
+            localDataController.clearPlanningData();
+            localDataController.clearUserData();
             analytics.logEvent(name: 'landing_error');
+            TebDebugLog(
+                fireStoreInstance: FirebaseFirestore.instance, message: 'landing screen error: ${snapshot.error.toString()}');
             return _errorScreen(errorMessage: snapshot.error.toString());
             // ao final do processo
           } else {
             // irá avaliar se o usuário possui login ou não
-            
-            return hiveController.localUser.id.isEmpty
+
+            TebDebugLog(fireStoreInstance: FirebaseFirestore.instance, message: 'landing finished');
+            return localDataController.localUser.id.isEmpty
                 ? const WellcomeScreen()
                 : MainScreen(
-                    user: hiveController.localUser,
-                    planningData: hiveController.localPlanningData,
+                    user: localDataController.localUser,
+                    planningData: localDataController.localPlanningData,
                   );
           }
         }

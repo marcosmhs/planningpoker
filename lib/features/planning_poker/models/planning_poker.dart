@@ -42,7 +42,7 @@ class PlanningData {
     return u;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> get toMap {
     Map<String, dynamic> r = {};
     r = {
       'id': id,

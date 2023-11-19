@@ -61,7 +61,7 @@ class User {
     return u;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> get toMap {
     Map<String, dynamic> r = {};
     r = {
       'id': id,
@@ -91,4 +91,12 @@ class User {
   static Role roleFromString(String stringValue) {
     return stringValue == 'Role.player' ? Role.player : Role.spectator;
   }
+}
+
+@HiveType(typeId: 3)
+class UserThemeMode {
+  @HiveField(0)
+  final String themeName;
+
+  UserThemeMode({required this.themeName});
 }
