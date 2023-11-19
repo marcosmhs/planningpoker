@@ -221,7 +221,6 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
         ],
       ),
       appBarActions: [
-        IconButton(onPressed: () => LocalDataController().clearAll(), icon: const Icon(Icons.bookmark_remove_rounded)),
         IconButton(
           onPressed: () {
             PlanningPokerMain.of(context)?.changeTheme();

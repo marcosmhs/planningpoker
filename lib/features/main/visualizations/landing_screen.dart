@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
@@ -8,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/visualizations/main_screen.dart';
 import 'package:planningpoker/features/main/visualizations/wellcome_screen.dart';
 import 'package:planningpoker/local_data_controller.dart';
-import 'package:teb_package/log/debug_log/teb_debug_log.dart';
 
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
@@ -52,8 +50,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
     var localDataController = LocalDataController();
 
-    TebDebugLog(fireStoreInstance: FirebaseFirestore.instance, message: 'landing_screen start');
-
     return FutureBuilder(
       future: localDataController.chechLocalData(),
       builder: (ctx, snapshot) {
@@ -66,14 +62,11 @@ class _LandingScreenState extends State<LandingScreen> {
             localDataController.clearPlanningData();
             localDataController.clearUserData();
             analytics.logEvent(name: 'landing_error');
-            TebDebugLog(
-                fireStoreInstance: FirebaseFirestore.instance, message: 'landing screen error: ${snapshot.error.toString()}');
             return _errorScreen(errorMessage: snapshot.error.toString());
             // ao final do processo
           } else {
             // irá avaliar se o usuário possui login ou não
 
-            TebDebugLog(fireStoreInstance: FirebaseFirestore.instance, message: 'landing finished');
             return localDataController.localUser.id.isEmpty
                 ? const WellcomeScreen()
                 : MainScreen(
