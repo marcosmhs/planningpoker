@@ -58,6 +58,7 @@ class _PlanningDataFormState extends State<PlanningDataForm> {
         if (retorno.returnType == TebReturnType.sucess) {
           if (_newPlanning) {
             _user.creator = true;
+            _user.role = Role.spectator;
             _user.planningPokerId = _planningData.id;
           }
           userController.save(user: _user);

@@ -12,7 +12,6 @@ import 'package:planningpoker/features/planning_poker/models/planning_poker.dart
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
-import 'package:planningpoker/local_data_controller.dart';
 import 'package:planningpoker/main.dart';
 import 'package:teb_package/teb_package.dart';
 
