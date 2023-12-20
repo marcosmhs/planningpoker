@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/consts.dart';
-import 'package:planningpoker/features/main/visualizations/widgets/voting_statistics.dart';
+import 'package:planningpoker/features/main/visualizations/widgets/voting_info.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
@@ -44,13 +44,18 @@ class _VotingAreaState extends State<VotingArea> {
   }
 
   Widget _votingArea(
-      Story storyVoting, Size size, List<StoryVote> storyVotesList, BuildContext context, StoryVote userStoryVote) {
+    Story storyVoting,
+    Size size,
+    List<StoryVote> storyVotesList,
+    BuildContext context,
+    StoryVote userStoryVote,
+  ) {
     return Column(
       children: [
         // Voting statistics
         if ((widget.user.creator || widget.user.isSpectator) ||
             (widget.user.isPlayer && storyVoting.status == StoryStatus.votingFinished))
-          VontingStatistics(
+          VontingInfo(
             size: size,
             user: widget.user,
             storyVotesList: storyVotesList,

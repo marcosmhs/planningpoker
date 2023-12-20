@@ -49,28 +49,6 @@ class StoryCard extends StatefulWidget {
         arguments: {'planningData': planningData, 'user': user},
       ),
     );
-    //return Card(
-    //  child: SizedBox(
-    //    height: size.height,
-    //    width: size.width,
-    //    child: ClipOval(
-    //      child: InkWell(
-    //        splashColor: Theme.of(context).primaryColor,
-    //        onTap: () => Navigator.of(context).pushNamed(
-    //          Routes.storyForm,
-    //          arguments: {'planningData': planningData, 'user': user},
-    //        ),
-    //        child: const Column(
-    //          mainAxisAlignment: MainAxisAlignment.center,
-    //          children: <Widget>[
-    //            Text("Nova história"),
-    //            Icon(Icons.add, size: 50),
-    //          ],
-    //        ),
-    //      ),
-    //    ),
-    //  ),
-    //);
   }
 
   @override
@@ -326,6 +304,23 @@ class _StoryCardState extends State<StoryCard> {
                   ),
                 ),
                 const Spacer(),
+                if (widget.story.status == StoryStatus.votingFinished)
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.numbers, size: 15),
+                        TebText(
+                          widget.story.points == 0
+                              ? 'Um café'
+                              : '${widget.story.points} ${widget.story.points == 1 ? 'ponto' : 'pontos'}',
+                          padding: const EdgeInsets.only(left: 3),
+                          textSize: 12,
+                        ),
+                      ],
+                    ),
+                  ),
                 if (widget.story.url.isNotEmpty)
                   // url
                   Padding(

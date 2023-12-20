@@ -3,7 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
-import 'package:planningpoker/features/main/visualizations/about_dialog_button.dart';
+import 'package:planningpoker/features/main/visualizations/widgets/about_dialog_button.dart';
 import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
 import 'package:planningpoker/features/planning_poker/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
