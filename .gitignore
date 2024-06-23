@@ -43,4 +43,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 lib/firebase_options.dart
+.firebase
 .firebase/hosting.YnVpbGRcd2Vi.cache
