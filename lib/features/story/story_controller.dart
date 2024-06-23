@@ -17,7 +17,7 @@ class StoryController with ChangeNotifier {
 
   StoryController();
 
-  Future<TebCustomReturn> save({required Story story, required String planningPokerId}) async {
+  Future<TebCustomReturn> save({required Story story, required User user, required String planningPokerId}) async {
     try {
       if (story.id.isEmpty) {
         var query = await FirebaseFirestore.instance
@@ -31,6 +31,7 @@ class StoryController with ChangeNotifier {
         story.id = TebUidGenerator.firestoreUid;
         story.planningPokerId = planningPokerId;
         story.order = dataList.length + 1;
+        story.user = user;
       }
       await FirebaseFirestore.instance
           .collection(_planningDataCollectionName)
@@ -64,7 +65,8 @@ class StoryController with ChangeNotifier {
 
       story.points = 0;
       story.status = StoryStatus.created;
-      save(planningPokerId: story.planningPokerId, story: story);
+      // User pode ser passado em branco pois somente um update é feito
+      save(planningPokerId: story.planningPokerId, user: User(), story: story);
 
       notifyListeners();
       return TebCustomReturn.sucess;
@@ -106,10 +108,10 @@ class StoryController with ChangeNotifier {
       otherStory.order = story.order;
       story.order = newOrder;
 
-      var result = await save(story: otherStory, planningPokerId: story.planningPokerId);
+      var result = await save(story: otherStory, user: User(), planningPokerId: story.planningPokerId);
       if (result.returnType != TebCustomReturn.sucess.returnType) return result;
 
-      result = await save(story: story, planningPokerId: story.planningPokerId);
+      result = await save(story: story, user: User(), planningPokerId: story.planningPokerId);
       if (result.returnType != TebCustomReturn.sucess.returnType) return result;
 
       return TebCustomReturn.sucess;
@@ -132,7 +134,7 @@ class StoryController with ChangeNotifier {
       }
 
       story.status = StoryStatus.voting;
-      return save(story: story, planningPokerId: planningPokerId);
+      return save(story: story, user: User(), planningPokerId: planningPokerId);
     } catch (e) {
       return TebCustomReturn.error(e.toString());
     }

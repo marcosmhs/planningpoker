@@ -107,7 +107,9 @@ class _StoryCardState extends State<StoryCard> {
               )).then((dialogReturn) {
                 if (dialogReturn == true) {
                   story.status = StoryStatus.created;
-                  StoryController().save(story: story, planningPokerId: widget.planningData.id).then((customReturn) {
+                  StoryController()
+                      .save(story: story, user: User(), planningPokerId: widget.planningData.id)
+                      .then((customReturn) {
                     if (customReturn.returnType == TebReturnType.error) {
                       TebCustomMessage.error(context, message: customReturn.message);
                     } else {
@@ -158,7 +160,9 @@ class _StoryCardState extends State<StoryCard> {
                 (dialogReturn) {
                   if (dialogReturn == true) {
                     story.status = StoryStatus.votingFinished;
-                    StoryController().save(story: story, planningPokerId: widget.planningData.id).then((customReturn) {
+                    StoryController()
+                        .save(story: story, user: User(), planningPokerId: widget.planningData.id)
+                        .then((customReturn) {
                       if (customReturn.returnType == TebReturnType.error) {
                         TebCustomMessage.error(context, message: customReturn.message);
                       } else {
@@ -207,7 +211,9 @@ class _StoryCardState extends State<StoryCard> {
                 (dialogReturn) {
                   if (dialogReturn == true) {
                     story.status = StoryStatus.closed;
-                    StoryController().save(story: story, planningPokerId: widget.planningData.id).then((customReturn) {
+                    StoryController()
+                        .save(story: story, user: User(), planningPokerId: widget.planningData.id)
+                        .then((customReturn) {
                       if (customReturn.returnType == TebReturnType.error) {
                         TebCustomMessage.error(context, message: customReturn.message);
                       } else {
@@ -396,7 +402,7 @@ class _StoryCardState extends State<StoryCard> {
                 // points
                 if (widget.story.status == StoryStatus.closed)
                   Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -411,6 +417,14 @@ class _StoryCardState extends State<StoryCard> {
                       ],
                     ),
                   ),
+                // user name
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                  child: Text(
+                    'Criado por ${widget.story.user!.name.length > 30 ? '${widget.story.user!.name.substring(0, 30)}...' : widget.story.user!.name}',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(

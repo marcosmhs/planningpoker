@@ -46,7 +46,7 @@ class _VontingInfoState extends State<VontingInfo> {
         widget.votingStory.status = StoryStatus.closed;
         widget.storyVotesList.clear();
         var customReturn =
-            await StoryController().save(story: widget.votingStory, planningPokerId: widget.votingStory.planningPokerId);
+            await StoryController().save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
         if (customReturn.returnType == TebReturnType.sucess) {
           TebCustomMessage.sucess(context, message: 'História concluída');
         } else {
@@ -65,7 +65,7 @@ class _VontingInfoState extends State<VontingInfo> {
       if (value == true) {
         widget.votingStory.status = StoryStatus.votingFinished;
         var customReturn =
-            await StoryController().save(story: widget.votingStory, planningPokerId: widget.votingStory.planningPokerId);
+            await StoryController().save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
         if (customReturn.returnType == TebReturnType.sucess) {
           TebCustomMessage.sucess(context, message: 'Votação finalizada.');
         } else {

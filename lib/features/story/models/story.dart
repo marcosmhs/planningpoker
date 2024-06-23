@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:planningpoker/features/user/model/user.dart';
 
 enum StoryStatus { created, voting, votingFinished, closed }
 
@@ -11,6 +12,7 @@ class Story {
   late int points;
   late StoryStatus status;
   late int order;
+  late User? user;
 
   Story({
     this.id = '',
@@ -21,6 +23,7 @@ class Story {
     this.points = 0,
     this.status = StoryStatus.created,
     this.order = 0,
+    this.user,
   });
 
   factory Story.fromDocument(DocumentSnapshot doc) {
@@ -61,6 +64,7 @@ class Story {
       points: map['points'] ?? 0,
       status: map['status'] == null ? StoryStatus.created : storyStatusFromString(map['status']),
       order: map['order'] ?? 0,
+      user: map['user'] == null ? User() : User.fromMap(map['user']),
     );
     return u;
   }
@@ -76,6 +80,7 @@ class Story {
       'points': points,
       'status': status.toString(),
       'order': order,
+      'user': user == null ? User().toMap : user?.toMap,
     };
 
     return r;

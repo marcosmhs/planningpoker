@@ -203,6 +203,7 @@ class _VotingAreaWidgetState extends State<VotingAreaWidget> {
                   List<StoryVote> storyVotesList = [];
                   if (snapshot.hasData) {
                     storyVotesList = snapshot.data!.docs.map((e) => StoryVote.fromDocument(e)).toList();
+                    storyVotesList.sort((a, b) => a.userName.compareTo(b.userName));
                   }
 
                   var userStoryVote = storyVotesList.where((vote) => vote.userId == widget.user.id).firstOrNull ?? StoryVote();

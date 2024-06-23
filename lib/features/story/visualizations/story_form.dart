@@ -58,7 +58,7 @@ class _StoryFormState extends State<StoryForm> {
       try {
         // remove a marcação de história em votação
         if (_story.status == StoryStatus.votingFinished) _story.status = StoryStatus.closed;
-        retorno = await storyController.save(story: _story, planningPokerId: _planningData.id);
+        retorno = await storyController.save(story: _story, user: _user, planningPokerId: _planningData.id);
         if (retorno.returnType == TebReturnType.sucess) {
           Navigator.of(context).pop();
         } else {
