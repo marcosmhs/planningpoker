@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/visualizations/landing_screen.dart';
-import 'package:planningpoker/features/main/visualizations/main_screen.dart';
+import 'package:planningpoker/features/planning_poker/visualizations/planning_poker_screen.dart';
 import 'package:planningpoker/features/main/visualizations/screen_not_found.dart';
-import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
-import 'package:planningpoker/features/planning_poker/planning_data_form.dart';
+import 'package:planningpoker/features/planning_data/visualizations/planning_form.dart';
 import 'package:planningpoker/features/story/visualizations/story_form.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 
@@ -16,6 +14,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
+import 'package:planningpoker/features/user/widgets/user_form.dart';
 import 'package:planningpoker/local_data_controller.dart';
 import 'package:teb_package/teb_package.dart';
 import 'firebase_options.dart';
@@ -42,11 +41,6 @@ class XDPathUrlStrategy extends HashUrlStrategy {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Hive.initFlutter();
-  Hive.registerAdapter(PlanningDataAdapter());
-  Hive.registerAdapter(RoleAdapter());
-  Hive.registerAdapter(UserAdapter());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -78,11 +72,11 @@ class PlanningPokerMain extends StatefulWidget {
   final ThemeData lightThemeData;
   final ThemeMode? localThemeMode;
   const PlanningPokerMain({
-    Key? key,
+    super.key,
     required this.darkThemeData,
     required this.lightThemeData,
     this.localThemeMode,
-  }) : super(key: key);
+  });
 
   @override
   State<PlanningPokerMain> createState() => _PlanningPokerMainState();
@@ -134,9 +128,10 @@ class _PlanningPokerMainState extends State<PlanningPokerMain> {
       title: 'Planning Poker',
       routes: {
         Routes.landingScreen: (ctx) => const LandingScreen(),
-        Routes.mainScreen: (ctx) => const MainScreen(),
-        Routes.planningDataForm: (ctx) => const PlanningDataForm(),
+        Routes.mainScreen: (ctx) => const PlanningPokerScreen(),
+        Routes.planningDataForm: (ctx) => const PlanningForm(),
         Routes.storyForm: (ctx) => const StoryForm(),
+        Routes.userForm: (ctx) => const UserForm(),
       },
       initialRoute: Routes.landingScreen,
       // Executado quando uma tela não é encontrada

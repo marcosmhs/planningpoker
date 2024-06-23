@@ -3,7 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/visualizations/widgets/about_dialog_button.dart';
-import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
+import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
@@ -128,7 +128,7 @@ class _StoryFormState extends State<StoryForm> {
                       },
                     ),
                     const TebText(
-                      'Se você utiliza o Jira, informe aqui o código do card',
+                      'Se você utiliza o Jira ou Kanbanize, informe aqui o código do card',
                       textStyle: FontStyle.italic,
                       padding: EdgeInsets.only(bottom: 5),
                     ),

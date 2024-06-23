@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/main/visualizations/widgets/about_dialog_button.dart';
 import 'package:planningpoker/features/main/visualizations/widgets/botton_info.dart';
-import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
-import 'package:planningpoker/features/planning_poker/planning_controller.dart';
+import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
+import 'package:planningpoker/features/planning_data/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 import 'package:planningpoker/main.dart';
@@ -94,6 +94,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                     textInputAction: TextInputAction.next,
                     onChanged: (value) => _user.name = value ?? '',
                   ),
+                  // Access code
                   TebTextEdit(
                     context: ctx,
                     labelText: 'Código de acesso',
@@ -110,7 +111,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                     children: [
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Text('Qual o seu papel?'),
+                        child: TebText('Qual o seu papel?'),
                       ),
                       Center(
                         child: ConstrainedBox(
@@ -128,7 +129,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                             children: [
                               SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.3,
-                                  child: Text(
+                                  child: TebText(
                                     'Jogador',
                                     textAlign: TextAlign.center,
                                     style: _user.role == Role.player
@@ -137,7 +138,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                                   )),
                               SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.3,
-                                  child: Text(
+                                  child: TebText(
                                     'Espectador',
                                     textAlign: TextAlign.center,
                                     style: _user.role == Role.spectator

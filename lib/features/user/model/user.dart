@@ -1,33 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hive/hive.dart';
 import 'package:teb_package/util/teb_uid_generator.dart';
 
-part 'user.g.dart';
+enum Role { spectator, player }
 
-@HiveType(typeId: 2)
-enum Role {
-  @HiveField(0)
-  spectator,
-  @HiveField(1)
-  player
-}
-
-@HiveType(typeId: 1)
 class User {
-  @HiveField(0)
   late String id;
-  @HiveField(1)
   late String planningPokerId;
-  @HiveField(2)
   late String name;
-  @HiveField(3)
   late bool creator;
-  @HiveField(4)
   late Role role;
-  @HiveField(5)
   late DateTime? createDate;
-  @HiveField(6)
   late String accessCode;
+  late String kanbanizeApiKey;
+  late String kanbanizeUrl;
+  late String kanbanizeBoardId;
+  late String kanbanizeLaneName;
+  late String kanbanizeColumnName;
+  
 
   User({
     this.id = '',
@@ -37,6 +26,11 @@ class User {
     this.role = Role.player,
     this.createDate,
     String accessCode = '',
+    this.kanbanizeApiKey = '',
+    this.kanbanizeUrl = '',
+    this.kanbanizeBoardId = '',
+    this.kanbanizeLaneName = '',
+    this.kanbanizeColumnName = '',
   }) {
     this.accessCode = accessCode.isNotEmpty ? accessCode : TebUidGenerator.userAccessCode;
   }
@@ -57,6 +51,12 @@ class User {
       creator: map['creator'] ?? false,
       createDate: map['createDate'] == null ? null : DateTime.tryParse(map['createDate']),
       accessCode: map['accessCode'] ?? '',
+      
+      kanbanizeApiKey: map['kanbanizeApiKey'] ?? '',
+      kanbanizeUrl: map['kanbanizeUrl'] ?? '',
+      kanbanizeBoardId: map['kanbanizeBoardId'] ?? '',
+      kanbanizeLaneName: map['kanbanizeLaneName'] ?? '',
+      kanbanizeColumnName: map['kanbanizeColumnName'] ?? '',
     );
     return u;
   }
@@ -71,6 +71,12 @@ class User {
       'creator': creator,
       'createDate': createDate.toString(),
       'accessCode': accessCode,
+      
+      'kanbanizeApiKey': kanbanizeApiKey,
+      'kanbanizeUrl': kanbanizeUrl,
+      'kanbanizeBoardId': kanbanizeBoardId,
+      'kanbanizeLaneName': kanbanizeLaneName,
+      'kanbanizeColumnName': kanbanizeColumnName,
     };
 
     return r;
@@ -93,9 +99,7 @@ class User {
   }
 }
 
-@HiveType(typeId: 3)
 class UserThemeMode {
-  @HiveField(0)
   final String themeName;
 
   UserThemeMode({required this.themeName});

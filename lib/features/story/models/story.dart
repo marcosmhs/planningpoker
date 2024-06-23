@@ -10,6 +10,7 @@ class Story {
   late String description;
   late int points;
   late StoryStatus status;
+  late int order;
 
   Story({
     this.id = '',
@@ -19,6 +20,7 @@ class Story {
     this.description = '',
     this.points = 0,
     this.status = StoryStatus.created,
+    this.order = 0,
   });
 
   factory Story.fromDocument(DocumentSnapshot doc) {
@@ -44,6 +46,7 @@ class Story {
     description = '';
     points = 0;
     status = StoryStatus.created;
+    order = 0;
   }
 
   static Story fromMap(Map<String, dynamic> map) {
@@ -57,6 +60,7 @@ class Story {
       description: map['description'] ?? '',
       points: map['points'] ?? 0,
       status: map['status'] == null ? StoryStatus.created : storyStatusFromString(map['status']),
+      order: map['order'] ?? 0,
     );
     return u;
   }
@@ -71,6 +75,7 @@ class Story {
       'description': description,
       'points': points,
       'status': status.toString(),
+      'order': order,
     };
 
     return r;
@@ -94,13 +99,28 @@ class Story {
       case StoryStatus.created:
         return 'Aguardando';
       case StoryStatus.closed:
-        return 'Encerrado';
+        return 'Concluído';
       case StoryStatus.voting:
         return 'Em votação';
       case StoryStatus.votingFinished:
-        return 'Votação encerrada';
+        return 'Votação finalizada';
       default:
-        return 'Encerrado';
+        return 'Concluído';
+    }
+  }
+
+  int get storyStatusIndex {
+    switch (status) {
+      case StoryStatus.created:
+        return 0;
+      case StoryStatus.closed:
+        return 9;
+      case StoryStatus.voting:
+        return 1;
+      case StoryStatus.votingFinished:
+        return 2;
+      default:
+        return 9;
     }
   }
 }

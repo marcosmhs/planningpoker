@@ -1,11 +1,10 @@
 class Consts {
-  static double storyCardHeight = 140;
-  static double storyCardWidth = 160;
+  static double storyCardHeight = 205;
+  static double storyCardWidth = 260;
   static double storiesAreaWidth = storyCardWidth + 5;
 
   static double userCardWidth = 300;
   static double usersArea = userCardWidth + 5;
-
 
   //static double mainAreaHeight = 500;
 

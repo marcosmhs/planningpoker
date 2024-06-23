@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 
 //import 'package:planningpoker/hive_controller.dart';
-import 'package:planningpoker/features/main/visualizations/main_screen.dart';
+import 'package:planningpoker/features/planning_poker/visualizations/planning_poker_screen.dart';
 import 'package:planningpoker/features/main/visualizations/wellcome_screen.dart';
 import 'package:planningpoker/local_data_controller.dart';
 
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key}) : super(key: key);
+  const LandingScreen({super.key});
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -69,7 +69,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
             return localDataController.localUser.id.isEmpty
                 ? const WellcomeScreen()
-                : MainScreen(
+                : PlanningPokerScreen(
                     user: localDataController.localUser,
                     planningData: localDataController.localPlanningData,
                   );

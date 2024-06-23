@@ -1,7 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/features/planning_poker/models/planning_poker.dart';
-import 'package:planningpoker/features/planning_poker/planning_controller.dart';
+import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
+import 'package:planningpoker/features/planning_data/planning_controller.dart';
 
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:teb_package/teb_package.dart';
