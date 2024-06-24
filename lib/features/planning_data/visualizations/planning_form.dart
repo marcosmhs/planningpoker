@@ -11,6 +11,7 @@ import 'package:planningpoker/features/user/model/user.dart';
 // ignore: depend_on_referenced_packages
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
+import 'package:teb_package/teb_package.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_uid_generator.dart';
 import 'package:teb_package/visual_elements/teb_buttons_line.dart';
@@ -137,6 +138,7 @@ class _PlanningFormState extends State<PlanningForm> {
                         upperCase: true,
                         prefixIcon: Icons.mail_lock_sharp,
                         textInputAction: TextInputAction.next,
+                        padding: const EdgeInsets.only(bottom: 30),
                         validator: (value) {
                           final finalValue = value ?? '';
                           if (finalValue == '') return 'Informe o código para convidar outras pessoas';
@@ -145,15 +147,17 @@ class _PlanningFormState extends State<PlanningForm> {
                       ),
 
                       TebCheckBox(
+                        subTitle:
+                            'Mantenha esta opção marcadas se outras pessoas (que não sejam jogadores) irão criar histórias para serem votadas',
                         context: context,
                         value: _planningData.othersCanCreateStories,
                         title: 'Outros espectadores podem criar histórias',
                         onChanged: (value) => setState(() => _planningData.othersCanCreateStories = value!),
                       ),
 
-                      const SizedBox(height: 20),
                       // Butons
                       TebButtonsLine(
+                        padding: const EdgeInsets.only(top: 30),
                         buttons: [
                           TebButton(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()),
                           TebButton(label: 'Continuar', onPressed: _submit),

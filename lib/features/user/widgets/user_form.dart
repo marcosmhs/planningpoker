@@ -87,9 +87,11 @@ class _UserFormState extends State<UserForm> {
       _user = arguments['user'] ?? User();
       _newPlanning = arguments['newPlanning'] ?? false;
 
+      _accessCodeController.text = _user.accessCode;
+
       if (_user.id.isNotEmpty) {
         _nameController.text = _user.name;
-        _accessCodeController.text = _user.accessCode;
+
         //_kanbanizeUrlController.text = _user.kanbanizeUrl;
         //_kanbanizeApiKeyController.text = _user.kanbanizeApiKey;
         //_kanbanizeBoardIdController.text = _user.kanbanizeBoardId;
@@ -146,7 +148,7 @@ class _UserFormState extends State<UserForm> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           TebTextEdit(
-                            width: screenWidth * 0.90,
+                            width: screenWidth * 0.80,
                             context: context,
                             controller: _accessCodeController,
                             labelText: 'Código de acesso',
@@ -166,8 +168,8 @@ class _UserFormState extends State<UserForm> {
                               _user.accessCode = TebUidGenerator.userAccessCode;
                               _accessCodeController.text = _user.accessCode;
                             },
-                            icon: const Icon(Icons.control_point_rounded),
-                            iconSize: 45,
+                            icon: const Icon(Icons.refresh_sharp),
+                            iconSize: 35,
                           )
                         ],
                       ),
@@ -241,7 +243,10 @@ class _UserFormState extends State<UserForm> {
                       TebButtonsLine(
                         padding: const EdgeInsets.only(top: 20),
                         buttons: [
-                          TebButton(label: 'Cancelar', onPressed: () => Navigator.of(context).pop()), // TODO - alterar para excluir cadastro da planning se tbem cancelou o usuário
+                          TebButton(
+                              label: 'Cancelar',
+                              onPressed: () => Navigator.of(context)
+                                  .pop()), // TODO - alterar para excluir cadastro da planning se tbem cancelou o usuário
                           TebButton(label: 'Continuar', onPressed: _submit),
                         ],
                       ),

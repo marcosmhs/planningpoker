@@ -253,7 +253,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                         analytics.logEvent(name: 'create_new_planning');
                         Navigator.of(context).popAndPushNamed(Routes.planningDataForm);
                       },
-                      child: const Text('Criar um novo jogo'),
+                      child: const Text('Criar uma nova partida'),
                     ),
                   ),
                 ),
@@ -262,7 +262,12 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Text('Entrar em um jogo já criado', style: Theme.of(context).textTheme.headlineSmall),
+                      TebText(
+                        'Entrar em uma partida já criada',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                        padding: const EdgeInsets.only(bottom: 20),
+                      ),
+                      const TebText('Caso tenha o código de convite e uma partida que já está em andamento, informe ele abaixo'),
                       ConstrainedBox(
                         constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
                         child: TebTextEdit(
@@ -270,6 +275,10 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                           labelText: 'Código do jogo',
                           controller: _invitationCodeController,
                         ),
+                      ),
+                      const TebText(
+                        'Se você já tiver criado seu usuário para uma partida, informe o código de acesso do usuário que você criou',
+                        padding: EdgeInsets.only(top: 10),
                       ),
                       ConstrainedBox(
                         constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),

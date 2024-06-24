@@ -12,7 +12,7 @@ class PlanningData {
     this.name = '',
     this.invitationCode = '',
     this.createDate,
-    this.othersCanCreateStories = false,
+    this.othersCanCreateStories = true,
   });
 
   factory PlanningData.fromDocument(DocumentSnapshot doc) {
@@ -28,7 +28,7 @@ class PlanningData {
       name: map['name'] ?? '',
       invitationCode: map['invitationCode'] ?? '',
       createDate: map['createDate'] == null ? null : DateTime.tryParse(map['createDate']),
-      othersCanCreateStories: map['othersCanCreateStories'] ?? false,
+      othersCanCreateStories: map['othersCanCreateStories'] ?? true,
     );
     return u;
   }
