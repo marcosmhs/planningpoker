@@ -48,3 +48,7 @@ flutter:
   assets:
     - assets/dark_theme.json
     - assets/light_theme.json
+    - assets/images/light_fibonacci.png
+    - assets/images/light_tshirt.png
+    - assets/images/dark_fibonacci.png
+    - assets/images/dark_tshirt.png    

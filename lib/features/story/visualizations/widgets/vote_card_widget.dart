@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:planningpoker/consts.dart';
+import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
@@ -11,8 +11,10 @@ import 'package:teb_package/visual_elements/teb_text.dart';
 class VoteCard extends StatefulWidget {
   final BuildContext context;
   final User user;
-  final String name;
-  final int vote;
+  final String displayName;
+  final String displayValue;
+  final PlanningData planningData;
+  final int voteValue;
   final Story story;
   final bool enhance;
 
@@ -20,9 +22,11 @@ class VoteCard extends StatefulWidget {
     super.key,
     required this.user,
     required this.context,
-    required this.name,
-    required this.vote,
+    required this.displayName,
+    required this.displayValue,
+    required this.voteValue,
     required this.story,
+    required this.planningData,
     this.enhance = false,
   });
 
@@ -33,6 +37,7 @@ class VoteCard extends StatefulWidget {
     required BuildContext context,
     required User user,
     required Story votingStory,
+    required PlanningData planningData,
     required StoryVote storyVote,
   }) {
     return Container(
@@ -46,15 +51,17 @@ class VoteCard extends StatefulWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: Consts.pokerCardsValues.length,
+        itemCount: planningData.voteListValues.length,
         itemBuilder: (BuildContext ctx, index) {
           return VoteCard(
               context: context,
               user: user,
-              name: Consts.pokerCardsValues[index].values.first,
-              vote: Consts.pokerCardsValues[index].keys.first,
+              displayName: planningData.voteListValues[index].displayName,
+              displayValue: planningData.voteListValues[index].displayValue,
+              voteValue: planningData.voteListValues[index].value,
+              planningData: planningData,
               story: votingStory,
-              enhance: storyVote.id.isEmpty ? false : storyVote.points == Consts.pokerCardsValues[index].keys.first);
+              enhance: storyVote.id.isEmpty ? false : storyVote.points == planningData.voteListValues[index].value);
         },
       ),
     );
@@ -64,6 +71,7 @@ class VoteCard extends StatefulWidget {
     required BuildContext context,
     required User user,
     required List<StoryVote> storyVotes,
+    required PlanningData planningData,
   }) {
     return Container(
       padding: const EdgeInsets.all(8),
@@ -81,8 +89,10 @@ class VoteCard extends StatefulWidget {
           return VoteCard(
             context: context,
             user: user,
-            name: storyVotes[index].userName,
-            vote: storyVotes[index].points,
+            displayName: storyVotes[index].userName,
+            displayValue: planningData.getLoteDisplayByValue(storyVotes[index].points),
+            voteValue: storyVotes[index].points,
+            planningData: planningData,
             story: Story(),
           );
         },
@@ -110,14 +120,14 @@ class _VoteCardState extends State<VoteCard> {
             );
 
             var message = oldVote.id.isEmpty
-                ? 'Confirma o voto ${widget.vote == 0 ? 'um café' : widget.vote}?'
-                : 'Trocar o voto de: ${oldVote.points == 0 ? 'um café' : oldVote.points} por ${widget.vote == 0 ? 'um café' : widget.vote}?';
+                ? 'Confirma o voto ${widget.displayValue}?'
+                : 'Trocar o voto de: ${oldVote.points == 0 ? 'um café' : oldVote.points} por ${widget.displayValue}?';
 
             // ignore: use_build_context_synchronously
             TebCustomDialog(context: context).confirmationDialog(message: message).then((response) {
               if (response == true) {
                 StoryController().vote(
-                  storyVote: StoryVote(points: widget.vote, storyId: widget.story.id),
+                  storyVote: StoryVote(points: widget.voteValue, storyId: widget.story.id),
                   user: widget.user,
                   oldStoryVote: oldVote,
                 );
@@ -132,7 +142,7 @@ class _VoteCardState extends State<VoteCard> {
               children: [
                 ListTile(
                   title: TebText(
-                    widget.name,
+                    widget.displayName,
                     textAlign: TextAlign.center,
                     textStyle: Theme.of(context).textTheme.labelLarge!.fontStyle,
                     textColor: Theme.of(context).textTheme.labelLarge!.color,
@@ -140,10 +150,10 @@ class _VoteCardState extends State<VoteCard> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                widget.vote == 0
+                widget.displayValue.toUpperCase().contains('CAFÉ')
                     ? const Icon(Icons.coffee_outlined, size: 60)
                     : Text(
-                        widget.vote.toString(),
+                        widget.displayValue,
                         style: Theme.of(context).textTheme.displayMedium,
                       ),
               ],

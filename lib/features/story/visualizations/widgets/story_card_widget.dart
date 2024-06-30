@@ -312,7 +312,7 @@ class _StoryCardState extends State<StoryCard> {
   }
 
   Future<void> _showStoryOptions({required BuildContext context, required Story story}) async {
-    if (!widget.user.creator) {
+    if (!widget.user.isSpectator) {
       Navigator.of(context).pushNamed(Routes.storyForm, arguments: {
         'story': story,
         'planningData': widget.planningData,

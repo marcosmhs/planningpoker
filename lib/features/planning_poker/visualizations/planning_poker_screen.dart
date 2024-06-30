@@ -25,7 +25,7 @@ class PlanningPokerScreen extends StatefulWidget {
   const PlanningPokerScreen({
     super.key,
     this.user,
-    this.planningData,
+    this.planningData
   });
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:planningpoker/features/main/routes.dart';
 import 'package:planningpoker/features/main/visualizations/widgets/about_dialog_button.dart';
 import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
+import 'package:planningpoker/features/planning_data/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
 
@@ -28,11 +29,6 @@ class _UserFormState extends State<UserForm> {
   bool _initializing = true;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _accessCodeController = TextEditingController();
-  //final TextEditingController _kanbanizeUrlController = TextEditingController();
-  //final TextEditingController _kanbanizeApiKeyController = TextEditingController();
-  //final TextEditingController _kanbanizeBoardIdController = TextEditingController();
-  //final TextEditingController _kanbanizeLaneNameController = TextEditingController();
-  //final TextEditingController _kanbanizeColumnNameController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   bool _savingData = false;
@@ -40,6 +36,8 @@ class _UserFormState extends State<UserForm> {
   var _user = User();
   var _planningData = PlanningData();
   var _newPlanning = false;
+
+  List<bool> _selectedRole = [true, false];
 
   void _submit() async {
     if (_savingData) return;
@@ -79,6 +77,14 @@ class _UserFormState extends State<UserForm> {
     }
   }
 
+  void _cancel() async {
+    if (_newPlanning) {
+      PlanningPokerController().delete(planningData: _planningData);
+    }
+
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initializing) {
@@ -88,15 +94,10 @@ class _UserFormState extends State<UserForm> {
       _newPlanning = arguments['newPlanning'] ?? false;
 
       _accessCodeController.text = _user.accessCode;
+      _selectedRole = [_user.isPlayer, _user.isSpectator];
 
       if (_user.id.isNotEmpty) {
         _nameController.text = _user.name;
-
-        //_kanbanizeUrlController.text = _user.kanbanizeUrl;
-        //_kanbanizeApiKeyController.text = _user.kanbanizeApiKey;
-        //_kanbanizeBoardIdController.text = _user.kanbanizeBoardId;
-        //_kanbanizeLaneNameController.text = _user.kanbanizeLaneName;
-        //_kanbanizeColumnNameController.text = _user.kanbanizeColumnName;
       }
 
       _initializing = false;
@@ -143,6 +144,7 @@ class _UserFormState extends State<UserForm> {
                           return null;
                         },
                       ),
+                      // access code
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -174,79 +176,60 @@ class _UserFormState extends State<UserForm> {
                         ],
                       ),
 
-                      // const Padding(
-                      //   padding: EdgeInsets.only(top: 20, bottom: 5),
-                      //   child: Text('Kanbanize (não obrigartório)'),
-                      // ),
-
-                      //// Kanbanize Url
-                      //TebTextEdit(
-                      //  context: context,
-                      //  controller: _kanbanizeUrlController,
-                      //  labelText: 'Kanbanize URL',
-                      //  hintText: 'Kanbanize URL',
-                      //  onSave: (value) => _user.kanbanizeUrl = value ?? '',
-                      //  prefixIcon: Icons.link,
-                      //  textInputAction: TextInputAction.next,
-                      //),
-                      //// kanbanize api key
-                      //TebTextEdit(
-                      //  context: context,
-                      //  controller: _kanbanizeApiKeyController,
-                      //  labelText: 'Kanbanize API Key',
-                      //  hintText: 'Kanbanize API Key',
-                      //  onSave: (value) => _user.kanbanizeApiKey = value ?? '',
-                      //  isPassword: true,
-                      //  prefixIcon: Icons.api,
-                      //  textInputAction: TextInputAction.next,
-                      //),
-
-                      //Row(
-                      //  children: [
-                      //    // Board ID
-                      //    TebTextEdit(
-                      //      width: screenWidth * 0.3,
-                      //      context: context,
-                      //      controller: _kanbanizeBoardIdController,
-                      //      labelText: 'Board ID',
-                      //      hintText: 'Board ID',
-                      //      onSave: (value) => _user.kanbanizeBoardId = value ?? '',
-                      //      prefixIcon: Icons.commit_rounded,
-                      //      textInputAction: TextInputAction.next,
-                      //    ),
-                      //    const Spacer(),
-                      //    // Lane Name
-                      //    TebTextEdit(
-                      //      width: screenWidth * 0.65,
-                      //      context: context,
-                      //      controller: _kanbanizeLaneNameController,
-                      //      labelText: 'Lane',
-                      //      hintText: 'Lane',
-                      //      onSave: (value) => _user.kanbanizeLaneName = value ?? '',
-                      //      prefixIcon: Icons.table_rows_outlined,
-                      //      textInputAction: TextInputAction.next,
-                      //    ),
-                      //  ],
-                      //),
-
-                      //// Lane Name
-                      //TebTextEdit(
-                      //  context: context,
-                      //  controller: _kanbanizeColumnNameController,
-                      //  labelText: 'Coluna',
-                      //  hintText: 'Coluna',
-                      //  onSave: (value) => _user.kanbanizeColumnName = value ?? '',
-                      //  prefixIcon: Icons.view_column_outlined,
-                      //  textInputAction: TextInputAction.next,
-                      //),
+                      //role
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: TebText('Qual o seu papel?'),
+                            ),
+                            Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints.tightFor(height: 40),
+                                child: ToggleButtons(
+                                  isSelected: _selectedRole,
+                                  fillColor: Theme.of(context).primaryColorLight,
+                                  selectedColor: Theme.of(context).primaryColorLight,
+                                  onPressed: (index) {
+                                    setState(() {
+                                      _user.role = index == 0 ? Role.player : Role.spectator;
+                                      _selectedRole = [index == 0, index == 1];
+                                    });
+                                  },
+                                  children: [
+                                    SizedBox(
+                                        width: screenWidth * 0.3,
+                                        child: TebText(
+                                          'Jogador',
+                                          textAlign: TextAlign.center,
+                                          style: _user.role == Role.player
+                                              ? TextStyle(color: Theme.of(context).cardColor)
+                                              : TextStyle(color: Theme.of(context).primaryColor),
+                                        )),
+                                    SizedBox(
+                                        width: screenWidth * 0.3,
+                                        child: TebText(
+                                          'Criador de histórias',
+                                          textAlign: TextAlign.center,
+                                          style: _user.role == Role.spectator
+                                              ? TextStyle(color: Theme.of(context).cardColor)
+                                              : TextStyle(color: Theme.of(context).primaryColor),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                       TebButtonsLine(
                         padding: const EdgeInsets.only(top: 20),
                         buttons: [
-                          TebButton(
-                              label: 'Cancelar',
-                              onPressed: () => Navigator.of(context)
-                                  .pop()), // TODO - alterar para excluir cadastro da planning se tbem cancelou o usuário
+                          TebButton(label: 'Cancelar', onPressed: _cancel), //TODO - testar
                           TebButton(label: 'Continuar', onPressed: _submit),
                         ],
                       ),

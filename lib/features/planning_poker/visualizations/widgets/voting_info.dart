@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:planningpoker/features/planning_data/models/planning_poker.dart';
 import 'package:planningpoker/features/story/models/story.dart';
 import 'package:planningpoker/features/story/models/story_vote.dart';
 import 'package:planningpoker/features/story/story_controller.dart';
@@ -14,18 +15,19 @@ import 'package:teb_package/util/teb_url_manager.dart';
 import 'package:teb_package/visual_elements/teb_text.dart';
 
 class VontingInfo extends StatefulWidget {
-  const VontingInfo({
-    super.key,
-    required this.size,
-    required this.user,
-    required this.storyVotesList,
-    required this.votingStory,
-  });
-
   final Size size;
   final User user;
   final List<StoryVote> storyVotesList;
   final Story votingStory;
+  final PlanningData planningData;
+
+  const VontingInfo(
+      {super.key,
+      required this.size,
+      required this.user,
+      required this.storyVotesList,
+      required this.votingStory,
+      required this.planningData});
 
   @override
   State<VontingInfo> createState() => _VontingInfoState();
@@ -45,8 +47,8 @@ class _VontingInfoState extends State<VontingInfo> {
         widget.votingStory.points = points;
         widget.votingStory.status = StoryStatus.closed;
         widget.storyVotesList.clear();
-        var customReturn =
-            await StoryController().save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
+        var customReturn = await StoryController()
+            .save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
         if (customReturn.returnType == TebReturnType.sucess) {
           TebCustomMessage.sucess(context, message: 'História concluída');
         } else {
@@ -64,8 +66,8 @@ class _VontingInfoState extends State<VontingInfo> {
     TebCustomDialog(context: context).confirmationDialog(message: 'Finalizar Votação?').then((value) async {
       if (value == true) {
         widget.votingStory.status = StoryStatus.votingFinished;
-        var customReturn =
-            await StoryController().save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
+        var customReturn = await StoryController()
+            .save(story: widget.votingStory, user: widget.user, planningPokerId: widget.votingStory.planningPokerId);
         if (customReturn.returnType == TebReturnType.sucess) {
           TebCustomMessage.sucess(context, message: 'Votação finalizada.');
         } else {
@@ -94,6 +96,7 @@ class _VontingInfoState extends State<VontingInfo> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          //voting now
           ListTile(
             leading: TebText(
               'Votando\nagora',
@@ -131,24 +134,36 @@ class _VontingInfoState extends State<VontingInfo> {
               (widget.user.isPlayer && widget.votingStory.status == StoryStatus.votingFinished))
             Row(
               children: [
-                Expanded(
-                  child: ListTile(
-                    leading: votesAvarege.round() == 0
-                        ? const Icon(Icons.coffee_outlined, size: 40)
-                        : TebText(
-                            '${votesAvarege.round()}',
-                            textStyle: Theme.of(context).textTheme.headlineLarge!.fontStyle,
-                            textWeight: Theme.of(context).textTheme.headlineLarge!.fontWeight,
-                            textSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
-                            textColor: Theme.of(context).textTheme.headlineLarge!.color,
-                            textAlign: TextAlign.center,
-                          ),
-                    title: TebText(votesAvarege.round() == 0
-                        ? 'Um café'
-                        : 'Média dos votos: ${votesAvarege.round()} (${votesAvarege.toStringAsPrecision(2)})'),
-                    subtitle: TebText(votesAvarege.round() == 0 ? '' : 'Menor Voto: $minVote / Maior Voto $maxVote'),
+                if (widget.planningData.planningVoteType == PlanningVoteType.fibonacci)
+                  Expanded(
+                    child: ListTile(
+                      leading: votesAvarege.round() == 0
+                          ? const Icon(Icons.coffee_outlined, size: 40) // only for fibonaccy
+                          : TebText(
+                              '${votesAvarege.round()}',
+                              textStyle: Theme.of(context).textTheme.headlineLarge!.fontStyle,
+                              textWeight: Theme.of(context).textTheme.headlineLarge!.fontWeight,
+                              textSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
+                              textColor: Theme.of(context).textTheme.headlineLarge!.color,
+                              textAlign: TextAlign.center,
+                            ),
+                      title: TebText(votesAvarege.round() == 0
+                          ? widget.planningData.getLoteDisplayByValue(0)
+                          : 'Média dos votos: ${votesAvarege.round()} (${votesAvarege.toStringAsPrecision(2)})'),
+                      subtitle: TebText(votesAvarege.round() == 0 ? '' : 'Menor Voto: $minVote / Maior Voto $maxVote'),
+                    ),
                   ),
-                ),
+                if (widget.planningData.planningVoteType == PlanningVoteType.tshirt)
+                  Expanded(
+                    child: ListTile(
+                      title: TebText(
+                        'Tamanho da média ${widget.planningData.getLoteDisplayByValue(widget.planningData.findClosestPossibleVote(votesAvarege).value)}',
+                      ),
+                      subtitle: TebText(votesAvarege.round() == 0
+                          ? ''
+                          : 'Menor Voto: ${widget.planningData.getLoteDisplayByValue(minVote)} / Maior Voto ${widget.planningData.getLoteDisplayByValue(maxVote)}'),
+                    ),
+                  ),
                 if (widget.user.creator && widget.votingStory.status == StoryStatus.voting)
                   ElevatedButton.icon(
                     onPressed: () => _setVotingFinished(),

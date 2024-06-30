@@ -66,7 +66,6 @@ class _LandingScreenState extends State<LandingScreen> {
             // ao final do processo
           } else {
             // irá avaliar se o usuário possui login ou não
-
             return localDataController.localUser.id.isEmpty
                 ? const WellcomeScreen()
                 : PlanningPokerScreen(

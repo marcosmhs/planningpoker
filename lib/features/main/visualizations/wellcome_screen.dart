@@ -12,6 +12,7 @@ import 'package:planningpoker/features/planning_data/models/planning_poker.dart'
 import 'package:planningpoker/features/planning_data/planning_controller.dart';
 import 'package:planningpoker/features/user/model/user.dart';
 import 'package:planningpoker/features/user/user_controller.dart';
+import 'package:planningpoker/local_data_controller.dart';
 import 'package:planningpoker/main.dart';
 import 'package:teb_package/teb_package.dart';
 
@@ -139,7 +140,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                               SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.3,
                                   child: TebText(
-                                    'Espectador',
+                                    'Criador de histórias',
                                     textAlign: TextAlign.center,
                                     style: _user.role == Role.spectator
                                         ? TextStyle(color: Theme.of(context).cardColor)
@@ -251,7 +252,9 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         analytics.logEvent(name: 'create_new_planning');
-                        Navigator.of(context).popAndPushNamed(Routes.planningDataForm);
+                        LocalDataController().getLocalThemeMode().then((themeMode) {
+                          Navigator.of(context).popAndPushNamed(Routes.planningDataForm, arguments: {'themeMode': themeMode});
+                        });
                       },
                       child: const Text('Criar uma nova partida'),
                     ),
@@ -272,7 +275,7 @@ class _WellcomeScreenState extends State<WellcomeScreen> {
                         constraints: BoxConstraints.tightFor(height: 72, width: MediaQuery.of(context).size.width * 0.75),
                         child: TebTextEdit(
                           context: context,
-                          labelText: 'Código do jogo',
+                          labelText: 'Código da partida',
                           controller: _invitationCodeController,
                         ),
                       ),

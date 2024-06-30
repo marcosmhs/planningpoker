@@ -54,6 +54,7 @@ class _VotingAreaWidgetState extends State<VotingAreaWidget> {
             user: widget.user,
             storyVotesList: storyVotesList,
             votingStory: storyVoting,
+            planningData: widget.planningData,
           ),
 
         // Votes
@@ -64,6 +65,7 @@ class _VotingAreaWidgetState extends State<VotingAreaWidget> {
           VoteCard.castedVotesList(
             context: context,
             user: widget.user,
+            planningData: widget.planningData,
             storyVotes: storyVotesList,
           ),
 
@@ -73,6 +75,7 @@ class _VotingAreaWidgetState extends State<VotingAreaWidget> {
             context: context,
             user: widget.user,
             votingStory: StoryController().getVotingStory(storiesList),
+            planningData: widget.planningData,
             storyVote: userStoryVote,
           ),
       ],
@@ -125,7 +128,7 @@ class _VotingAreaWidgetState extends State<VotingAreaWidget> {
                   },
                 ),
                 const TebText(
-                  'Espectadores',
+                  'Criadores de Histórias/\nEspectadores',
                   textWeight: FontWeight.w600,
                   padding: EdgeInsets.symmetric(vertical: 10),
                 ),

@@ -57,6 +57,20 @@ class PlanningPokerController with ChangeNotifier {
     return FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningId).snapshots();
   }
 
+  Future<TebCustomReturn> delete({required PlanningData planningData}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(_planningDataCollectionName)
+          .doc(planningData.id)
+          .delete();
+
+      notifyListeners();
+      return TebCustomReturn.sucess;
+    } catch (e) {
+      return TebCustomReturn.error(e.toString());
+    }
+  }
+
   Future<bool> planningExists({required String planningId}) async {
     final query = FirebaseFirestore.instance.collection(_planningDataCollectionName).doc(planningId);
 

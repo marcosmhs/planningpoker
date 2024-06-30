@@ -11,11 +11,11 @@ import 'package:planningpoker/features/user/model/user.dart';
 // ignore: depend_on_referenced_packages
 import 'package:teb_package/messaging/teb_custom_message.dart';
 import 'package:teb_package/screen_elements/teb_custom_scaffold.dart';
-import 'package:teb_package/teb_package.dart';
 import 'package:teb_package/util/teb_return.dart';
 import 'package:teb_package/util/teb_uid_generator.dart';
 import 'package:teb_package/visual_elements/teb_buttons_line.dart';
 import 'package:teb_package/visual_elements/teb_checkbox.dart';
+import 'package:teb_package/visual_elements/teb_text.dart';
 import 'package:teb_package/visual_elements/teb_text_form_field.dart';
 
 class PlanningForm extends StatefulWidget {
@@ -35,6 +35,11 @@ class _PlanningFormState extends State<PlanningForm> {
   final _formKey = GlobalKey<FormState>();
   bool _savingData = false;
   bool _newPlanning = false;
+
+  List<bool> _planningVoteType = [true, false];
+
+  var _planningVoteTypeImagePath = 'assets/images/dark_fibonacci.png';
+  late ThemeMode _themeMode = ThemeMode.dark;
 
   void _submit() async {
     if (_savingData) return;
@@ -74,12 +79,24 @@ class _PlanningFormState extends State<PlanningForm> {
     }
   }
 
+  String getPlanningVoteTypeImagePath(PlanningVoteType planningVoteType) {
+    return _themeMode == ThemeMode.dark
+        ? planningVoteType == PlanningVoteType.fibonacci
+            ? 'assets/images/dark_fibonacci.png'
+            : 'assets/images/dark_tshirt.png'
+        : planningVoteType == PlanningVoteType.fibonacci
+            ? 'assets/images/light_fibonacci.png'
+            : 'assets/images/light_tshirt.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initializing) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
       _planningData = arguments['planningData'] ?? PlanningData();
       _user = arguments['user'] ?? User();
+      _themeMode = arguments['themeMode'] ?? ThemeData.dark();
+      _planningVoteTypeImagePath = getPlanningVoteTypeImagePath(PlanningVoteType.fibonacci);
 
       _newPlanning = _planningData.id.isEmpty;
       _planningData.invitationCode = _newPlanning ? TebUidGenerator.invitationCode : _planningData.invitationCode;
@@ -146,14 +163,79 @@ class _PlanningFormState extends State<PlanningForm> {
                         },
                       ),
 
+                      // card creation
                       TebCheckBox(
                         subTitle:
                             'Mantenha esta opção marcadas se outras pessoas (que não sejam jogadores) irão criar histórias para serem votadas',
                         context: context,
                         value: _planningData.othersCanCreateStories,
-                        title: 'Outros espectadores podem criar histórias',
+                        title: 'Outros não jogadores podem podem criar histórias',
                         onChanged: (value) => setState(() => _planningData.othersCanCreateStories = value!),
                       ),
+
+                      // Voting Type
+                      if (_newPlanning)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: TebText('Que tipo de escala de votos deseja usar?'),
+                              ),
+                              Row(
+                                children: [
+                                  // Buttons
+                                  ToggleButtons(
+                                    isSelected: _planningVoteType,
+                                    fillColor: Theme.of(context).primaryColorLight,
+                                    selectedColor: Theme.of(context).primaryColorLight,
+                                    direction: Axis.vertical,
+                                    onPressed: (index) {
+                                      setState(() {
+                                        _planningData.planningVoteType =
+                                            index == 0 ? PlanningVoteType.fibonacci : PlanningVoteType.tshirt;
+                                        _planningVoteType = [index == 0, index == 1];
+                                        _planningVoteTypeImagePath = getPlanningVoteTypeImagePath(
+                                            index == 0 ? PlanningVoteType.fibonacci : PlanningVoteType.tshirt);
+                                      });
+                                    },
+                                    children: [
+                                      SizedBox(
+                                          width: MediaQuery.of(context).size.width * 0.2,
+                                          child: TebText(
+                                            'Fibonacci',
+                                            textAlign: TextAlign.center,
+                                            style: _planningData.planningVoteType == PlanningVoteType.fibonacci
+                                                ? TextStyle(color: Theme.of(context).cardColor)
+                                                : TextStyle(color: Theme.of(context).primaryColor),
+                                          )),
+                                      SizedBox(
+                                          width: MediaQuery.of(context).size.width * 0.2,
+                                          child: TebText(
+                                            'T-Shirt',
+                                            textAlign: TextAlign.center,
+                                            style: _planningData.planningVoteType == PlanningVoteType.tshirt
+                                                ? TextStyle(color: Theme.of(context).cardColor)
+                                                : TextStyle(color: Theme.of(context).primaryColor),
+                                          )),
+                                    ],
+                                  ),
+                                  // Image
+                                  SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: Image.asset(
+                                        _planningVoteTypeImagePath,
+                                        fit: BoxFit.contain,
+                                      ))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
 
                       // Butons
                       TebButtonsLine(

@@ -29,7 +29,7 @@ class _TitleBarWidgetState extends State<TitleBarWidget> {
         Row(
           children: [
             TebText(
-              'Código do jogo: ',
+              'Código da partida: ',
               style: TextStyle(fontSize: Theme.of(context).textTheme.labelLarge!.fontSize),
             ),
             TebText(

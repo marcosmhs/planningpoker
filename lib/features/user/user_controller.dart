@@ -13,24 +13,7 @@ class UserController with ChangeNotifier {
 
   User get currentUser => User.fromMap(_currentUser.toMap);
 
-  //Future<bool> _userNameExists({required User user}) async {
-  //  var query = FirebaseFirestore.instance
-  //      .collection(_planningDataCollectionName)
-  //      .doc(user.planningPokerId)
-  //      .collection(_userCollectionName)
-  //      .where("name", isEqualTo: user.name);
-  //  if (user.id.isNotEmpty) {
-  //    query = query.where("id", isNotEqualTo: user.id);
-  //  }
-  //  var dataList = await query.get();
-  //  return dataList.docs.isNotEmpty;
-  //}
-
   Future<TebCustomReturn> save({required User user}) async {
-    //if (await _userNameExists(user: user)) {
-    //  return CustomReturn.error('Já existe uma pessoa com o nome ${user.name}');
-    //}
-
     try {
       if (user.id.isEmpty) {
         user.id = TebUidGenerator.firestoreUid;
